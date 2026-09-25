@@ -2,9 +2,9 @@
 
 Reclaim processes customer returns in a warehouse without a human in the loop for the routine cases. When a returned unit is scanned at the dock, an agent checks that the item is what was ordered, grades its condition, prices it on the live web, picks the highest-value disposition (restock, refurbish, return to vendor or liquidate), carries it out in the inventory ledger and verifies the result. It hands a case to a person only when it should, and it reuses that person's decision on similar cases.
 
-Built in one day for the TokensAnd Long Horizon Agents Hack (San Francisco, Sep 25 2026) with **Liquid AI**, **Nimble**, **RawTree** and **Black Forest Labs**.
+Built in one day for the TokensAnd Long Horizon Agents Hack (San Francisco, Sep 25 2026) with **Liquid AI** (on-device vision model), **Nimble** (live web search), **RawTree** (storage and agent memory) and **Black Forest Labs** (synthetic dock photos), orchestrated with **LangGraph**.
 
-![Architecture](assets/architecture_aws.png)
+![Architecture](assets/architecture.png)
 
 ## The problem
 
@@ -33,6 +33,8 @@ Top row: the catalog photo of what was ordered. Bottom row: the photo taken at t
 ![Catalog photo vs dock photo](assets/catalog_vs_dock.jpg)
 
 ## Architecture
+
+The dock writes a return row to RawTree. The Watcher sees it and opens a case. The Supervisor routes the case through its sub-agents, checkpointing every step. An escalation pauses in the checkpointer until a reviewer decides in the dashboard, and the verdict is stored as precedent.
 
 * **Supervisor** (LangGraph `StateGraph`, one thread per return). It owns the case from dock to closure. A deterministic `allowed_next()` lists the legal next steps; the Liquid model chooses only at real branch points, such as thin price evidence. A SQLite checkpointer makes `interrupt()` durable, so a paused case survives restarts and resumes where it stopped.
 * **Sub-agents**, each a compiled LangGraph subgraph:
@@ -152,7 +154,7 @@ backend/reclaim/          decision policy, memory, warehouse, RawTree client, ru
 backend/scripts/          serve_model.sh, seeding, dataset build, evaluation
 backend/dataset/          returns_100.csv (synthetic returns + labels)
 frontend/                 React + Tailwind dashboard
-assets/                   architecture diagrams and README images
+assets/                   architecture diagram and README images
 models/                   GGUF weights (not committed)
 ```
 
