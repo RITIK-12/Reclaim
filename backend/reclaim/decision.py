@@ -15,12 +15,16 @@ CLOSE_CALL = 0.10
 MIN_CONFIDENCE = 0.6
 
 
-def classify_defect(reason_category: str, reason_text: str, visible_defects: list[str], grade: str) -> str:
+SCREENLESS = {"headphones", "earbuds", "speaker", "cable_charger", "case_protector", "other_accessory"}
+
+
+def classify_defect(reason_category: str, reason_text: str, visible_defects: list[str], grade: str,
+                    category: str | None = None) -> str:
     """Map what the customer said + what the inspector saw to a repair-cost class."""
     seen = " ".join(visible_defects).lower()
     said = reason_text.lower()
     if re.search(r"crack|shatter|broken (screen|glass)|smashed", seen + " " + said):
-        return "screen_crack"
+        return "cosmetic" if category in SCREENLESS else "screen_crack"  # a cracked earbud case is not a screen
     if reason_category == "functional":
         return "battery" if re.search(r"batter|charg|power|dies", said) else "functional"
     if re.search(r"scratch|dent|scuff|fray|chip|worn|damage", seen) or reason_category == "physical_damage":

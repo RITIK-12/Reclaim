@@ -24,6 +24,9 @@ class Settings:
     # Nimble
     nimble_url: str = _env("NIMBLE_URL", "https://sdk.nimbleway.com")
     nimble_key: str = _env("NIMBLE_API_KEY")
+    # Black Forest Labs (FLUX.2) for synthetic dock photos
+    bfl_url: str = _env("BFL_URL", "https://api.bfl.ai")
+    bfl_key: str = _env("BFL_API_KEY")
     # Liquid via LM Studio (one model for vision + text)
     llm_url: str = _env("LLM_URL", "http://localhost:1234/v1")
     llm_model: str = _env("LLM_MODEL", "lfm2.5-vl-3b")

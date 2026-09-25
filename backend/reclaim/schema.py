@@ -7,6 +7,7 @@ Warehouse (system of record): orders, returns, inventory
 Agent memory:                 mem_events, mem_knowledge, mem_decisions, mem_evidence
 Telemetry and scoring:        llm_calls, eval_gt, eval_runs
 Reference (seeded once):      products, vendors, cost_model   (see scripts/seed_catalog.py)
+Synthetic dataset:            dataset, dataset_images         (see scripts/build_dataset.py)
 """
 from __future__ import annotations
 

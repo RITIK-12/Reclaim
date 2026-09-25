@@ -146,7 +146,8 @@ class Inspector(SubAgent):
         result = {
             "identity": identity, "confidence": round(conf, 2), "grade": dock["condition_grade"],
             "visible_defects": defects, "defect_visible": "yes" if defects else "not_visible",
-            "defect_class": classify_defect(r["reason_category"], r["reason_text"], defects, dock["condition_grade"]),
+            "defect_class": classify_defect(r["reason_category"], r["reason_text"], defects, dock["condition_grade"],
+                                            p["category"]),
             "observed": dock["observed_object"], "observed_category": dock["category_guess"],
             "visible_text": dock["visible_text"], "guard": guard, "photos_used": s["photo_idx"] + 1,
             "notes": v["reason"], "brand_text_seen": self.brand_seen(dock, p),

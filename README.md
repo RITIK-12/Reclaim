@@ -69,6 +69,7 @@ RawTree is append-only (read-only SQL, no UPDATE/DELETE), so all state is event-
 |---|---|
 | **Liquid AI** · LFM2.5-VL-3B (F16 GGUF via LM Studio, on-device) | blind inspection of dock photos, catalog profiles, identity verification, price extraction from web text, Supervisor routing at branch points, decision rationales. One model for vision and text. |
 | **Nimble** · Web Search API | live new / used / refurbished / open-box prices with sources; results feed the decision and are stored as evidence |
+| **Black Forest Labs** · FLUX.2 [max] | turns real catalog photos into photos of returned units (cracked screens, torn cushions, crushed boxes, knock-off swaps, one apple) for a 100-return synthetic dataset |
 | **RawTree** (Tinybird) | system of record *and* agent memory: catalog, orders, returns, inventory ledger, every agent event, knowledge, precedents, evidence, LLM telemetry, evaluation. Every table is prefixed `reclaim_` and the client refuses SQL outside that prefix (shared cluster). |
 
 ## Evaluation
@@ -91,6 +92,14 @@ The two misses are instructive:
 * **E12, live data changed the answer:** a cracked 2023 phone labelled REFURBISH using its catalog price. Live prices put it at $137 new today, so a $55 screen repair barely pays and the agent liquidated it (EV $12.62 vs $11.62). The rubric's own logic, applied to today's prices, agrees with the agent.
 
 The safety metric that matters most is **unsafe auto-resolves**: cases that should have gone to a human but were executed automatically.
+
+## Synthetic returns dataset (FLUX.2)
+
+`backend/dataset/returns_100.csv` holds 100 returns built from real catalog products: **5 categories** (phone, laptop, headphones, earbuds, smartwatch) × **20**, and within each category **4 per final action** (restock, refurbish, return to vendor, liquidate, escalate). So the set is balanced by product and by label.
+
+Each row carries the product, a customer return reason, the FLUX.2 [max] edit prompt that turns the catalog photo into the photo of the returned unit, and the expected identity, grade, defect class, action and rule. The scenario depends on the price band: cheap items get wrecked and liquidated; repairable mid-to-high items get a cracked screen or torn cushion and are refurbished; intact items with functional claims go back to the vendor; items of $300 or more with claims a photo can't verify, plus knock-off swaps, are escalated. Exactly one return is the apple.
+
+The split is stratified 90 train / 10 test (2 per action), with 5 of the test items (one per action, one per category) marked for the demo. Images are stored locally and in RawTree: `reclaim_dataset` holds labels and metadata, and `reclaim_dataset_images` holds a base64 JPEG per row. Rebuild or top up with `uv run scripts/build_dataset.py`.
 
 ## Data
 

@@ -23,7 +23,8 @@ COST_MODEL: dict[str, dict] = {
                        repair={"cosmetic": 25, "functional": 90}),
     "headphones": dict(handling=6, repack=3, channel_fee=0.15, liquidation_pct=0.12, rtv_shipping=10,
                        repair={"cosmetic": 12, "battery": 30, "functional": 40}),
-    "earbuds":    dict(handling=5, repack=2, channel_fee=0.15, liquidation_pct=0.10, rtv_shipping=8, repair={}),
+    "earbuds":    dict(handling=5, repack=2, channel_fee=0.15, liquidation_pct=0.10, rtv_shipping=8,
+                       repair={"cosmetic": 15}),  # charging-case shell / ear tips
     "speaker":    dict(handling=6, repack=3, channel_fee=0.15, liquidation_pct=0.12, rtv_shipping=12,
                        repair={"cosmetic": 10, "functional": 35}),
     "smartwatch": dict(handling=6, repack=3, channel_fee=0.12, liquidation_pct=0.15, rtv_shipping=8,
