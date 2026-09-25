@@ -85,7 +85,7 @@ def resale_basis(market: dict, list_price: float) -> dict:
 def expected_values(x: DecisionInput, basis: dict) -> dict[str, float]:
     c = x.cost
     fee = c["channel_fee"]
-    repair = c["repair"].get(x.defect_class, 0.0)
+    repair = c["repair"].get(x.defect_class, 0.0) * (1.3 if x.grade == "D" else 1.0)  # badly broken: more work
     credit = (x.vendor or {}).get("credit_pct", 0.0)
     return {
         "RESTOCK": basis["open_box"] * (1 - fee) - c["handling"] - c["repack"],
@@ -104,7 +104,7 @@ def allowed_actions(x: DecisionInput) -> tuple[list[str], list[str]]:
         ok.append("RESTOCK")
     else:
         why_not.append("RESTOCK needs an intact, matching item returned for packaging/cosmetic reasons")
-    if x.repairable and x.defect_class in x.cost["repair"] and x.grade != "D":
+    if x.repairable and x.defect_class in x.cost["repair"]:
         ok.append("REFURBISH")
     else:
         why_not.append(f"REFURBISH: no repair path for {x.defect_class} on {x.category}")

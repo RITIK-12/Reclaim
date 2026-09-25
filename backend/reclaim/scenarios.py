@@ -22,7 +22,8 @@ class ScenarioBook:
         return json.loads(settings.scenarios_file.read_text())
 
     def returns(self, which: str = "all") -> list[dict]:
-        return [r for r in self.spec["returns"] if which in ("all", r["set"])]
+        """which: all | demo | eval | warmup | live (demo stages)."""
+        return [r for r in self.spec["returns"] if which in ("all", r["set"], r.get("stage"))]
 
     @staticmethod
     def photo_names(key: str) -> list[str]:

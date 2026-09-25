@@ -1,159 +1,223 @@
-"""Inspector: Liquid VLM sub-agent. Blind pass, then compare pass, category guard, re-inspect loop."""
+"""Inspector: Liquid VLM sub-agent.
+
+A 3B VLM is much more reliable looking at one image at a time than comparing two, so identity is
+checked in three steps:
+  1. observe  - blind pass on the dock photo (the model is not told what was ordered): object,
+                category, visible text, color, damage, condition grade
+  2. profile  - the same description of the catalog photo (cached per SKU)
+  3. verify   - text-only Liquid call comparing the two descriptions against the order
+then code applies guard rules (non-electronic object, wrong product family, brand text on the item).
+If identity is still uncertain and another photo exists, it re-inspects with the next photo.
+"""
 from __future__ import annotations
 
+import re
 from typing import Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
 
 from ..catalog import CATEGORIES, FAMILY
-from ..decision import MIN_CONFIDENCE, classify_defect
+from ..decision import HIGH_VALUE, MIN_CONFIDENCE, classify_defect
 from .base import SubAgent
 
 GUESSES = tuple(CATEGORIES) + ("non_electronic",)
 MAX_PHOTOS = 2
+# Keyword sanity check for the blind category (small models sometimes pick the wrong enum value).
+KEYWORDS = [("earbuds", r"earbud|earphone|in-ear"), ("headphones", r"headphone|headset"),
+            ("phone", r"\bphone|smartphone|iphone"), ("tablet", r"tablet|ipad"), ("laptop", r"laptop|notebook|chromebook"),
+            ("speaker", r"speaker|soundbar|boombox"), ("smartwatch", r"watch"), ("camera", r"camera|dash ?cam"),
+            ("display", r"monitor|television|\btv\b"), ("cable_charger", r"cable|charger|adapter|cord"),
+            ("case_protector", r"case|screen protector|cover"), ("other_accessory", r"antenna|band|strap|mount")]
 
 
-class BlindObservation(BaseModel):
+class Observation(BaseModel):
     observed_object: str = Field(description="What the object is, in a few words")
     category_guess: Literal[GUESSES]  # type: ignore[valid-type]
-    visible_text: str = Field(description="Brand or model text visible on the item, or empty")
+    visible_text: str = Field(description="Brand or model text printed on the item, or empty")
+    color: str
     visible_damage: list[str] = Field(description="Cracks, scratches, dents, fraying... [] if none")
-    packaging: Literal["sealed", "opened", "damaged", "none"]
+    condition_grade: Literal["A", "B", "C", "D"] = Field(description="A like new, B light wear, C visible damage, D broken")
     photo_quality: Literal["good", "poor"]
 
 
-class CompareVerdict(BaseModel):
-    observations: str = Field(description="One sentence comparing type, brand/logo, shape and color")
+class IdentityVerdict(BaseModel):
     same_product_type: Literal["yes", "no"]
-    same_brand_and_model: Literal["yes", "no", "cannot_tell"]
-    same_color: Literal["yes", "no", "cannot_tell"]
-    condition_grade: Literal["A", "B", "C", "D"]
-    visible_defects: list[str]
-    defect_consistent_with_reason: Literal["yes", "no", "not_visible"]
-    match_confidence: float = Field(ge=0, le=1)
+    same_brand: Literal["yes", "no", "cannot_tell"]
+    verdict: Literal["match", "mismatch", "uncertain"]
+    confidence: float = Field(ge=0, le=1)
+    reason: str = Field(description="One short sentence")
 
 
 class InspectState(TypedDict, total=False):
     case: dict
     photo_idx: int
-    blind: dict
-    compare: dict
+    dock: dict
+    catalog: dict
+    verdict: dict
     result: dict
     retry: bool
 
 
-BLIND_SYSTEM = ("You are a warehouse returns inspector looking at one photo taken at the receiving dock. "
-                "Describe only what is visible. You do not know what the customer ordered.")
-COMPARE_SYSTEM = ("You are a warehouse returns inspector. Compare the catalog photo of the ordered product with "
-                  "the photo of the item that actually arrived. Identity is about WHAT the item is (type, brand, "
-                  "model, shape, color), never about its condition: a cracked or scratched unit of the same model "
-                  "is still the same product. Grade condition separately.")
+OBSERVE_SYSTEM = ("You are a warehouse returns inspector looking at one photo. Describe only what is visible. "
+                  "You do not know what the customer ordered.")
+OBSERVE_TEXT = ("Describe the object in this photo. category_guess must be one of: " + ", ".join(GUESSES) +
+                ". Use non_electronic only for things that are not electronic products at all (food, fruit, "
+                "rocks, bricks, clothing, toys). Grade its condition: A like new, B light wear, C visible "
+                "damage such as cracks, D broken or unusable.")
+VERIFY_SYSTEM = ("You check whether a returned item is the product that was ordered, from two descriptions. "
+                 "Judge only product type, shape and brand/model text. Ignore damage and condition (a cracked "
+                 "unit of the same model is the same product), and ignore angle, lighting, background and "
+                 "whatever is shown on a screen.")
+NO_DAMAGE = re.compile(r"^(none|no|n/?a|nothing|no damage|no visible damage|like new|a like new|good|intact)\.?$", re.I)
+
+
+def infer_category(text: str) -> str | None:
+    t = text.lower()
+    return next((cat for cat, pattern in KEYWORDS if re.search(pattern, t)), None)
 
 
 class Inspector(SubAgent):
     name = "inspector"
 
+    def __init__(self, *args, **kw):
+        self._profiles: dict[str, dict] = {}
+        super().__init__(*args, **kw)
+
     def build(self) -> StateGraph:
         g = StateGraph(InspectState)
-        g.add_node("blind", self.blind)
-        g.add_node("compare", self.compare)
+        g.add_node("observe", self.observe)
+        g.add_node("profile", self.profile)
+        g.add_node("verify", self.verify)
         g.add_node("guard", self.guard)
         g.add_node("next_photo", self.next_photo)
-        g.add_edge(START, "blind")
-        g.add_edge("blind", "compare")
-        g.add_edge("compare", "guard")
+        g.add_edge(START, "observe")
+        g.add_edge("observe", "profile")
+        g.add_edge("profile", "verify")
+        g.add_edge("verify", "guard")
         g.add_conditional_edges("guard", lambda s: "next_photo" if s["retry"] else END)
-        g.add_edge("next_photo", "blind")
+        g.add_edge("next_photo", "observe")
         return g
 
     def run(self, case: dict, **inputs) -> dict:
         return self.graph.invoke({"case": case, "photo_idx": 0, **inputs})["result"]
 
-    def _photo(self, s: InspectState):
-        return self.image(s["case"]["return"]["photos"][s["photo_idx"]])
-
-    def blind(self, s: InspectState) -> dict:
+    # --- nodes ------------------------------------------------------------------------------------
+    def observe(self, s: InspectState) -> dict:
         case = s["case"]
-        obs = self.ask(case, BlindObservation, BLIND_SYSTEM,
-                       "What object is in this photo? category_guess must be one of: " + ", ".join(GUESSES) +
-                       ". Use non_electronic for anything that is not an electronic product (food, fruit, rocks, "
-                       "bricks, clothing, toys).", [self._photo(s)], node="blind")
-        self.log(case, "inspector.blind", f"Photo {s['photo_idx'] + 1}: sees {obs.observed_object} "
-                 f"({obs.category_guess})", obs.model_dump())
-        return {"blind": obs.model_dump()}
+        photo = self.image(case["return"]["photos"][s["photo_idx"]])
+        obs = self.ask(case, Observation, OBSERVE_SYSTEM, OBSERVE_TEXT, [photo], node="observe").model_dump()
+        obs = self._sanity(obs)
+        self.log(case, "inspector.blind", f"Photo {s['photo_idx'] + 1} (blind): {obs['observed_object']} "
+                 f"[{obs['category_guess']}], grade {obs['condition_grade']}"
+                 + (f", text \"{obs['visible_text']}\"" if obs["visible_text"] else "")
+                 + (f", damage: {', '.join(obs['visible_damage'])}" if obs["visible_damage"] else ""), obs)
+        return {"dock": obs}
 
-    def compare(self, s: InspectState) -> dict:
-        case = s["case"]
-        p, r = case["product"], case["return"]
-        text = (f"Image 1 is the catalog photo of the ordered product: \"{p['title'][:150]}\" "
-                f"(brand {p['brand']}, category {p['category']}). Image 2 is the item received at the dock. "
-                f"A blind inspection of image 2 said: {s['blind']}. Customer's return reason: \"{r['reason_text']}\". "
-                "Answer: is it the same product type? the same brand and model? the same color? Then grade the "
-                "condition of image 2 (A like new, B light wear, C visible damage, D broken or unusable) and say "
-                "whether the visible condition is consistent with the customer's reason.")
-        v = self.ask(case, CompareVerdict, COMPARE_SYSTEM, text,
-                     [self.image(f"cat_{p['sku']}.jpg"), self._photo(s)], node="compare")
-        self.log(case, "inspector.compare", f"type {v.same_product_type}, brand/model {v.same_brand_and_model}, "
-                 f"color {v.same_color}, grade {v.condition_grade}: {v.observations}", v.model_dump())
-        return {"compare": v.model_dump()}
+    def profile(self, s: InspectState) -> dict:
+        """Describe the catalog photo once per SKU (reused by later cases for the same product)."""
+        case, sku = s["case"], s["case"]["product"]["sku"]
+        if sku not in self._profiles:
+            obs = self.ask(case, Observation, OBSERVE_SYSTEM, OBSERVE_TEXT, [self.image(f"cat_{sku}.jpg")],
+                           node="profile").model_dump()
+            self._profiles[sku] = self._sanity(obs)
+            self.log(case, "inspector.profile", f"Catalog photo: {obs['observed_object']} ({obs['color']})", obs)
+        return {"catalog": self._profiles[sku]}
+
+    def verify(self, s: InspectState) -> dict:
+        case, dock, cat = s["case"], s["dock"], s["catalog"]
+        p = case["product"]
+        text = (f"Ordered product: \"{p['title'][:140]}\" (brand {p['brand']}, category {p['category']}).\n"
+                f"Catalog photo of the ordered product shows: {cat['observed_object']}; color {cat['color']}; "
+                f"text on item: \"{cat['visible_text']}\".\n"
+                f"Item received at the dock shows: {dock['observed_object']}; color {dock['color']}; "
+                f"text on item: \"{dock['visible_text']}\".\nIs the received item the same product as ordered?")
+        v = self.ask(case, IdentityVerdict, VERIFY_SYSTEM, text, node="verify").model_dump()
+        self.log(case, "inspector.verify", f"{v['verdict']} ({v['confidence']:.2f}): {v['reason']}", v)
+        return {"verdict": v}
 
     def guard(self, s: InspectState) -> dict:
-        """Code decides identity from the VLM's sub-answers, plus a category guard from the blind pass."""
-        case, blind, v = s["case"], s["blind"], s["compare"]
-        p = case["product"]
-        identity, conf, guard = self.identity(v, blind, p)
-        expected = FAMILY.get(p["category"], "accessory")
-        seen = FAMILY.get(blind["category_guess"], "non_electronic")
-        if blind["category_guess"] == "non_electronic":
-            identity, conf = "mismatch", max(conf, 0.95)
-            guard = f"blind pass saw a non-electronic object ({blind['observed_object']})"
-        elif seen != expected:
-            identity, conf = ("mismatch", max(conf, 0.85)) if v["same_product_type"] == "no" else \
-                ("uncertain", min(conf, 0.5))
-            guard = f"blind pass saw a {blind['category_guess']}, order is a {p['category']}"
-        r = case["return"]
-        defects = list(dict.fromkeys(blind["visible_damage"] + v["visible_defects"]))
+        case, dock, v = s["case"], s["dock"], s["verdict"]
+        p, r = case["product"], case["return"]
+        identity, conf, guard = self.identity(v, dock, p, s["catalog"])
+        defects = dock["visible_damage"]
         result = {
-            "identity": identity, "confidence": round(conf, 2),
-            "grade": v["condition_grade"], "visible_defects": defects,
-            "defect_visible": v["defect_consistent_with_reason"],
-            "defect_class": classify_defect(r["reason_category"], r["reason_text"], defects, v["condition_grade"]),
-            "observed": blind["observed_object"], "guard": guard, "photos_used": s["photo_idx"] + 1,
-            "notes": v["observations"], "brand_text_seen": self.brand_seen(blind, p),
+            "identity": identity, "confidence": round(conf, 2), "grade": dock["condition_grade"],
+            "visible_defects": defects, "defect_visible": "yes" if defects else "not_visible",
+            "defect_class": classify_defect(r["reason_category"], r["reason_text"], defects, dock["condition_grade"]),
+            "observed": dock["observed_object"], "observed_category": dock["category_guess"],
+            "visible_text": dock["visible_text"], "guard": guard, "photos_used": s["photo_idx"] + 1,
+            "notes": v["reason"], "brand_text_seen": self.brand_seen(dock, p),
         }
         if guard:
             self.log(case, "inspector.guard", f"Guard rule: {guard}", {"guard": guard})
-        weak = result["identity"] == "uncertain" or result["confidence"] < MIN_CONFIDENCE
+        weak = identity == "uncertain" or conf < MIN_CONFIDENCE
         retry = weak and s["photo_idx"] + 1 < min(MAX_PHOTOS, len(r["photos"]))
         if not retry:
-            self.log(case, "inspector.completed", f"{result['identity']} ({result['confidence']:.2f}), grade "
-                     f"{result['grade']}, defect {result['defect_class']}", result)
+            self.log(case, "inspector.completed", f"{identity} ({conf:.2f}), grade {result['grade']}, "
+                     f"defect {result['defect_class']}", result)
         return {"result": result, "retry": retry}
-
-    @staticmethod
-    def brand_seen(blind: dict, product: dict) -> bool:
-        """Did the blind pass read the product's brand (or a distinctive title word) on the item?"""
-        text = blind.get("visible_text", "").lower()
-        words = {w for w in [product.get("brand", "").lower(), *product["title"].lower().split()[:4]]
-                 if len(w) >= 3 and w not in {"the", "for", "with", "and", "new", "generic"}}
-        return bool(text) and any(w in text for w in words)
-
-    @classmethod
-    def identity(cls, v: dict, blind: dict, product: dict) -> tuple[str, float, str | None]:
-        conf = float(v["match_confidence"])
-        same_family = FAMILY.get(blind["category_guess"]) == FAMILY.get(product["category"], "accessory")
-        if cls.brand_seen(blind, product) and same_family:
-            if v["same_brand_and_model"] == "yes":
-                return "match", max(conf, 0.9), None
-            return "match", 0.75, "brand text read on the item confirms identity despite the visual comparison"
-        if v["same_product_type"] == "no" or v["same_brand_and_model"] == "no":
-            return "mismatch", max(conf, 0.8), None
-        if v["same_brand_and_model"] == "yes":
-            return "match", max(conf, 0.7), None
-        return ("match", 0.65, None) if v["same_color"] == "yes" else ("uncertain", min(conf, 0.5), None)
 
     def next_photo(self, s: InspectState) -> dict:
         self.log(s["case"], "inspector.reinspect", f"Low confidence ({s['result']['confidence']:.2f}); "
                  "inspecting the next photo", {"confidence": s["result"]["confidence"]})
         return {"photo_idx": s["photo_idx"] + 1}
+
+    # --- rules ------------------------------------------------------------------------------------
+    @staticmethod
+    def _sanity(obs: dict) -> dict:
+        """Clean up small-model quirks: 'none' listed as damage, a crack graded as B, a wrong enum value."""
+        obs["visible_damage"] = [d for d in obs["visible_damage"] if d.strip() and not NO_DAMAGE.match(d.strip())]
+        seen = " ".join(obs["visible_damage"]).lower()
+        if re.search(r"crack|shatter|broken|smash", seen) and obs["condition_grade"] in ("A", "B"):
+            obs["condition_grade"] = "C"
+        elif seen and obs["condition_grade"] == "A":
+            obs["condition_grade"] = "B"
+        if obs["visible_text"].strip().lower() in ("none", "n/a", "null"):
+            obs["visible_text"] = ""
+        guess = infer_category(obs["observed_object"])
+        if guess and (obs["category_guess"] == "non_electronic" or
+                      FAMILY.get(obs["category_guess"]) != FAMILY.get(guess)):
+            obs["category_guess"] = guess
+        return obs
+
+    @staticmethod
+    def brand_seen(dock: dict, product: dict) -> bool:
+        """Did the blind pass read the product's brand (or a distinctive title word) on the item?"""
+        text = dock.get("visible_text", "").lower()
+        words = {w for w in [product.get("brand", "").lower(), *product["title"].lower().split()[:4]]
+                 if len(w) >= 3 and w not in {"the", "for", "with", "and", "new", "generic", "2023"}}
+        return bool(text) and any(w in text for w in words)
+
+    @staticmethod
+    def same_text(dock: dict, catalog: dict) -> bool:
+        """The same text printed on the received item and on the catalog product."""
+        norm = lambda t: re.sub(r"[^a-z0-9]", "", t.lower())  # noqa: E731
+        a, b = norm(dock.get("visible_text", "")), norm(catalog.get("visible_text", ""))
+        return len(a) >= 3 and len(b) >= 3 and (a in b or b in a)
+
+    @classmethod
+    def identity(cls, v: dict, dock: dict, product: dict, catalog: dict | None = None) -> tuple[str, float, str | None]:
+        catalog = catalog or {}
+        conf = float(v["confidence"])
+        seen, expected = dock["category_guess"], product["category"]
+        if seen == "non_electronic":
+            return "mismatch", max(conf, 0.95), f"blind pass saw a non-electronic object ({dock['observed_object']})"
+        evidence = cls.brand_seen(dock, product) or cls.same_text(dock, catalog)
+        if FAMILY.get(seen) != FAMILY.get(expected, "accessory"):
+            guard = f"blind pass saw a {seen}, the order is a {expected}"
+            return ("uncertain", 0.5, guard) if evidence else ("mismatch", max(conf, 0.85), guard)
+        if cls.brand_seen(dock, product):
+            return "match", max(conf, 0.85), None
+        if cls.same_text(dock, catalog):
+            return "match", max(min(conf, 0.8), 0.75), None
+        if float(product.get("list_price") or 0) >= HIGH_VALUE:  # expensive: the model's say-so is not enough
+            return "uncertain", 0.5, (f"${float(product['list_price']):.0f} item: no brand or model text confirms "
+                                      "identity, so a human should verify")
+        if v["verdict"] == "match" and v["same_brand"] == "no":
+            return "uncertain", min(conf, 0.5), None
+        if v["verdict"] == "match":
+            return "match", max(conf, 0.7), None
+        if v["verdict"] == "mismatch":
+            return "mismatch", max(conf, 0.7), None
+        return "uncertain", min(conf, 0.5), None

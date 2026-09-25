@@ -22,6 +22,9 @@ class DockReplay:
     def new_run_id(tag: str = "demo") -> str:
         return f"{tag}-{time.strftime('%m%d-%H%M%S')}"
 
+    def seeded(self, run_id: str) -> bool:
+        return bool(db.one(f"SELECT count() AS n FROM {{t:orders}} WHERE run_id = {sql_str(run_id)}")["n"])
+
     def seed(self, run_id: str, which: str = "demo") -> list[dict]:
         scenarios = self.book.returns(which)
         products = self.store.products([s["sku"] for s in scenarios])
@@ -51,8 +54,12 @@ class DockReplay:
                            f"AND case_id = {sql_str('RMA-' + key)} AND decided_by = 'human'")["n"])
 
     def play(self, run_id: str, which: str = "demo", gap_s: float = 10.0, stop=lambda: False) -> None:
-        """Arrivals with a gap; a scenario with `wait_for` arrives only after that case's human decision."""
-        for s in self.seed(run_id, which):
+        """Arrivals with a gap; a scenario with `wait_for` arrives only after that case's human decision.
+        Orders for the whole set are seeded once per run, so stages can be played one after another."""
+        full = "eval" if which == "eval" else "all" if which == "all" else "demo"
+        if not self.seeded(run_id):
+            self.seed(run_id, full)
+        for s in self.book.returns(which):
             while s.get("wait_for") and not self.human_decided(run_id, s["wait_for"]) and not stop():
                 time.sleep(1.0)
             if stop():

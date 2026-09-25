@@ -38,7 +38,8 @@
     "escalate": false,
     "fraud": false,
     "why": "Cracked screen on a repairable phone; screen repair is well below refurbished resale."
-   }
+   },
+   "stage": "warmup"
   },
   {
    "key": "D2",
@@ -59,7 +60,8 @@
     "escalate": false,
     "fraud": false,
     "why": "Functional defect, Bose RTV terms (90% credit, 90 days), inside the window, earbuds are not repairable."
-   }
+   },
+   "stage": "warmup"
   },
   {
    "key": "D3",
@@ -80,7 +82,8 @@
     "escalate": false,
     "fraud": false,
     "why": "A $19 damaged cable: no vendor terms, not repairable, handling costs more than it recovers."
-   }
+   },
+   "stage": "warmup"
   },
   {
    "key": "D4",
@@ -101,7 +104,8 @@
     "escalate": false,
     "fraud": false,
     "why": "Packaging-only damage on an intact item: sell as open box."
-   }
+   },
+   "stage": "warmup"
   },
   {
    "key": "D5",
@@ -122,7 +126,8 @@
     "escalate": true,
     "fraud": true,
     "why": "An apple came back instead of an iPhone 14."
-   }
+   },
+   "stage": "live"
   },
   {
    "key": "D6",
@@ -143,7 +148,8 @@
     "escalate": true,
     "fraud": false,
     "why": "A $440 functional claim the photos cannot verify: a human decides (demo: RETURN_TO_VENDOR)."
-   }
+   },
+   "stage": "live"
   },
   {
    "key": "D7",
@@ -165,7 +171,8 @@
     "fraud": false,
     "why": "Same situation as D6 (laptop, unverifiable battery claim): follow the human precedent."
    },
-   "wait_for": "D6"
+   "wait_for": "D6",
+   "stage": "live"
   },
   {
    "key": "E01",
