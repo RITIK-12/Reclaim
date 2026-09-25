@@ -160,7 +160,9 @@ def list_cases():
                     "received_at_ms": r["received_at_ms"], "photo": (r.get("photos") or [None])[0],
                     "status": stage_of(h) if h else "QUEUED", "last_summary": h.get("last_summary", ""),
                     "action": d.get("action"), "decided_by": d.get("decided_by"), "uplift": d.get("uplift"),
-                    "fraud_flag": d.get("fraud_flag"), "precedent_ref": d.get("precedent_ref") or None})
+                    "fraud_flag": d.get("fraud_flag"), "precedent_ref": d.get("precedent_ref") or None,
+                    "fraud_suspected": (stage_of(h) if h else "") == "ESCALATED"
+                    and "fraud" in h.get("last_summary", "").lower()})
     return out
 
 
@@ -222,7 +224,7 @@ def kpis():
         "auto_resolved_pct": round(100 * len(auto) / len(closed), 1) if closed else 0,
         "escalated": sum(c["decided_by"] == "human" or c["status"] == "ESCALATED" for c in cases),
         "pending_human": sum(c["status"] == "ESCALATED" for c in cases),
-        "fraud_flags": sum(bool(c["fraud_flag"]) for c in cases),
+        "fraud_flags": sum(bool(c["fraud_flag"]) or c["fraud_suspected"] for c in cases),
         "uplift_vs_liquidate": round(sum(float(c["uplift"] or 0) for c in closed), 2),
         "avg_case_secs": round(sum(secs) / len(secs), 1) if secs else None,
         "llm_calls": int(llm.get("calls") or 0), "avg_llm_ms": round(float(llm.get("avg_ms") or 0)),

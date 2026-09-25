@@ -8,7 +8,7 @@ export interface CaseRow {
   case_id: string; key: string; sku: string; title: string; category: string; list_price: number;
   reason_text: string; reason_category: string; received_at_ms: number; photo: string | null;
   status: Status; last_summary: string; action: string | null; decided_by: string | null;
-  uplift: number | null; fraud_flag: boolean | null; precedent_ref: string | null;
+  uplift: number | null; fraud_flag: boolean | null; precedent_ref: string | null; fraud_suspected: boolean;
 }
 
 export interface TimelineItem { ts_ms: number; agent: string; type: string; summary: string; payload: any }

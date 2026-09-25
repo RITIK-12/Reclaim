@@ -35,7 +35,7 @@ export default function DockFeed({ cases, selected, onSelect, follow, onToggleFo
                   <ActionBadge action={c.status === "ESCALATED" && !c.action ? "ESCALATE" : c.action} />
                   {c.decided_by === "human" && <span className="font-mono text-[10px] text-hold">by human</span>}
                   {c.precedent_ref && <span className="font-mono text-[10px] text-violet-700">via precedent</span>}
-                  {c.fraud_flag && <span className="font-mono text-[10px] font-semibold text-fraud">FRAUD</span>}
+                  {(c.fraud_flag || c.fraud_suspected) && <span className="font-mono text-[10px] font-semibold text-fraud">{c.fraud_flag ? "FRAUD" : "SUSPECTED FRAUD"}</span>}
                 </div>
               )}
             </div>

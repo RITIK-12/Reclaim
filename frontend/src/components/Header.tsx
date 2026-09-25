@@ -38,7 +38,7 @@ export default function Header({ kpis, runId, current }: { kpis: Kpis | null; ru
         <Kpi label="Returns" value={k?.received ?? 0} sub={`${k?.closed ?? 0} closed`} />
         <Kpi label="Auto-resolved" value={`${k?.auto_resolved_pct ?? 0}%`} sub="no human needed" accent="text-go" />
         <Kpi label="Awaiting human" value={k?.pending_human ?? 0} sub={`${k?.escalated ?? 0} escalated`} accent={k?.pending_human ? "text-hold" : ""} />
-        <Kpi label="Fraud flags" value={k?.fraud_flags ?? 0} sub="wrong item back" accent={k?.fraud_flags ? "text-fraud" : ""} />
+        <Kpi label="Fraud flags" value={k?.fraud_flags ?? 0} sub="suspected or confirmed" accent={k?.fraud_flags ? "text-fraud" : ""} />
         <Kpi label="Extra recovered" value={usd(k?.uplift_vs_liquidate)} sub="vs liquidate-all" accent="text-go" />
         <Kpi label="Time per case" value={k?.avg_case_secs ? `${k.avg_case_secs}s` : "—"} sub={`${k?.llm_calls ?? 0} Liquid calls`} />
         <Kpi label="Web searches" value={k?.web_searches ?? 0} sub={`Nimble · ${k?.cache_hits ?? 0} memory hits`} accent="text-live" />

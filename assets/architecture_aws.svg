@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 910" width="1600" height="910">
+<defs>
+<style>
+.lab { font-family: "Amazon Ember", "Helvetica Neue", Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #232F3E; }
+.sub { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11.5px; fill: #687078; }
+.grp { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 14px; font-weight: 700; }
+.edge { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11.5px; fill: #545B64; font-style: italic; }
+.ttl { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 26px; font-weight: 700; fill: #232F3E; }
+.ico { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>
+<symbol id="i-box" viewBox="0 0 24 24"><g class="ico"><path d="M12 2.5 20.5 7v10L12 21.5 3.5 17V7z"/><path d="M3.5 7 12 11.5 20.5 7M12 11.5v10"/><path d="M7.8 4.8l8.4 4.5"/></g></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><g class="ico"><rect x="2.5" y="6.5" width="19" height="13.5" rx="3"/><circle cx="12" cy="13.2" r="3.8"/><path d="M8.5 6.5 10 4h4l1.5 2.5"/></g></symbol>
+<symbol id="i-receipt" viewBox="0 0 24 24"><g class="ico"><path d="M6 2.5h12v19l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5z"/><path d="M9 7h6M9 10.5h6M9 14h4"/></g></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><g class="ico"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/></g></symbol>
+<symbol id="i-hub" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="12" r="3.2"/><circle cx="4" cy="4.5" r="1.8"/><circle cx="20" cy="4.5" r="1.8"/><circle cx="4" cy="19.5" r="1.8"/><circle cx="20" cy="19.5" r="1.8"/><path d="M9.6 9.7 5.3 5.8M14.4 9.7l4.3-3.9M9.6 14.3l-4.3 3.9M14.4 14.3l4.3 3.9"/></g></symbol>
+<symbol id="i-lens" viewBox="0 0 24 24"><g class="ico"><circle cx="10" cy="10" r="6.5"/><path d="M14.8 14.8 21 21"/><path d="M6.6 10s1.4-2.4 3.4-2.4 3.4 2.4 3.4 2.4-1.4 2.4-3.4 2.4S6.6 10 6.6 10z"/></g></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4.2" ry="9.5"/><path d="M2.5 12h19M4.3 7h15.4M4.3 17h15.4"/></g></symbol>
+<symbol id="i-scales" viewBox="0 0 24 24"><g class="ico"><path d="M12 3v17M6 6h12M8 20.5h8"/><path d="M6 6 3 12.5h6zM18 6l-3 6.5h6z"/></g></symbol>
+<symbol id="i-rack" viewBox="0 0 24 24"><g class="ico"><rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M3 9.5h18M3 15.5h18"/><path d="M8.6 12.6l1.8 1.7 3.8-3.8"/><path d="M6 6.2h4M14 18.4h4"/></g></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><g class="ico"><ellipse cx="12" cy="5" rx="8" ry="2.8"/><path d="M4 5v14c0 1.6 3.6 2.8 8 2.8s8-1.2 8-2.8V5"/><path d="M4 12c0 1.6 3.6 2.8 8 2.8s8-1.2 8-2.8"/></g></symbol>
+<symbol id="i-chip" viewBox="0 0 24 24"><g class="ico"><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2.5V6M12 2.5V6M15 2.5V6M9 18v3.5M12 18v3.5M15 18v3.5M2.5 9H6M2.5 12H6M2.5 15H6M18 9h3.5M18 12h3.5M18 15h3.5"/><path d="M10 9.3v5.4h4"/></g></symbol>
+<symbol id="i-person" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="7.5" r="4"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5"/></g></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><g class="ico"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8.5 21h7M12 16.5V21"/><path d="M5.5 13l3.5-4 3 2.5 4.5-5"/></g></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><g class="ico"><path d="M11 3.5l1.9 7.1 7.1 1.9-7.1 1.9L11 21.5l-1.9-7.1L2 12.5l7.1-1.9z"/><path d="M19.5 2.5v4M17.5 4.5h4"/></g></symbol>
+<symbol id="i-loop" viewBox="0 0 24 24"><g class="ico"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 3.5v5h-5"/></g></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="12" r="9.5"/><path d="M9.5 8v8M14.5 8v8"/></g></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><g class="ico"><path d="M5 21V3.5"/><path d="M5 4h12l-3 4 3 4H5"/></g></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><g class="ico"><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></g></symbol>
+</defs>
+<rect width="1600" height="910" fill="#FFFFFF"/>
+<text x="40" y="70" class="ttl">Reclaim · architecture</text>
+<text x="360" y="70" class="sub" font-size="15">autonomous returns desk · Liquid sees · Nimble prices · RawTree remembers</text>
+<rect x="40" y="110" width="230" height="360" rx="6" fill="#D86613" fill-opacity="0.04" stroke="#D86613" stroke-width="1.6"/>
+<rect x="40" y="110" width="30" height="30" fill="#D86613"/>
+<use href="#i-box" x="45" y="115" width="20" height="20" style="color:#FFFFFF"/>
+<text x="80" y="130" class="grp" fill="#D86613">Warehouse</text>
+<rect x="40" y="500" width="230" height="200" rx="6" fill="#C7457B" fill-opacity="0.04" stroke="#C7457B" stroke-width="1.6" stroke-dasharray="7 5"/>
+<rect x="40" y="500" width="30" height="30" fill="#C7457B"/>
+<use href="#i-sparkle" x="45" y="505" width="20" height="20" style="color:#FFFFFF"/>
+<text x="80" y="520" class="grp" fill="#C7457B">Synthetic data (offline)</text>
+<rect x="310" y="110" width="820" height="590" rx="6" fill="#2E73B8" fill-opacity="0.04" stroke="#2E73B8" stroke-width="1.6"/>
+<rect x="310" y="110" width="30" height="30" fill="#2E73B8"/>
+<use href="#i-hub" x="315" y="115" width="20" height="20" style="color:#FFFFFF"/>
+<text x="350" y="130" class="grp" fill="#2E73B8">Agent orchestration · LangGraph</text>
+<rect x="1170" y="110" width="390" height="250" rx="6" fill="#7B5EA7" fill-opacity="0.04" stroke="#7B5EA7" stroke-width="1.6"/>
+<rect x="1170" y="110" width="30" height="30" fill="#7B5EA7"/>
+<use href="#i-globe" x="1175" y="115" width="20" height="20" style="color:#FFFFFF"/>
+<text x="1210" y="130" class="grp" fill="#7B5EA7">External services</text>
+<rect x="1170" y="390" width="390" height="310" rx="6" fill="#D13212" fill-opacity="0.04" stroke="#D13212" stroke-width="1.6"/>
+<rect x="1170" y="390" width="30" height="30" fill="#D13212"/>
+<use href="#i-person" x="1175" y="395" width="20" height="20" style="color:#FFFFFF"/>
+<text x="1210" y="410" class="grp" fill="#D13212">Human in the loop</text>
+<rect x="40" y="730" width="1520" height="150" rx="6" fill="#3F8624" fill-opacity="0.04" stroke="#3F8624" stroke-width="1.6"/>
+<rect x="40" y="730" width="30" height="30" fill="#3F8624"/>
+<use href="#i-db" x="45" y="735" width="20" height="20" style="color:#FFFFFF"/>
+<text x="80" y="750" class="grp" fill="#3F8624">RawTree</text>
+<rect x="123" y="170" width="64" height="64" rx="12" fill="#D86613"/>
+<use href="#i-box" x="134.52" y="181.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="155.0" y="254" text-anchor="middle" class="lab">Dock scan</text>
+<text x="155.0" y="271" text-anchor="middle" class="sub">new return row</text>
+<rect x="123" y="320" width="64" height="64" rx="12" fill="#D86613"/>
+<use href="#i-camera" x="134.52" y="331.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="155.0" y="404" text-anchor="middle" class="lab">Dock photos</text>
+<text x="155.0" y="421" text-anchor="middle" class="sub">2 angles</text>
+<rect x="123" y="560" width="64" height="64" rx="12" fill="#C7457B"/>
+<use href="#i-sparkle" x="134.52" y="571.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="155.0" y="644" text-anchor="middle" class="lab">FLUX.2 [max]</text>
+<text x="155.0" y="661" text-anchor="middle" class="sub">100 returns</text>
+<rect x="678" y="330" width="84" height="84" rx="12" fill="#2E73B8"/>
+<use href="#i-hub" x="693.12" y="345.12" width="53.76" height="53.76" style="color:#FFFFFF"/>
+<text x="720.0" y="434" text-anchor="middle" class="lab">Supervisor</text>
+<text x="720.0" y="451" text-anchor="middle" class="sub">main agent</text>
+<rect x="400" y="190" width="64" height="64" rx="12" fill="#2E73B8"/>
+<use href="#i-lens" x="411.52" y="201.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="432.0" y="274" text-anchor="middle" class="lab">Inspector</text>
+<text x="432.0" y="291" text-anchor="middle" class="sub">vision checks</text>
+<rect x="930" y="190" width="64" height="64" rx="12" fill="#2E73B8"/>
+<use href="#i-globe" x="941.52" y="201.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="962.0" y="274" text-anchor="middle" class="lab">Market Analyst</text>
+<text x="962.0" y="291" text-anchor="middle" class="sub">live prices</text>
+<rect x="400" y="470" width="64" height="64" rx="12" fill="#2E73B8"/>
+<use href="#i-scales" x="411.52" y="481.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="432.0" y="554" text-anchor="middle" class="lab">Decision policy</text>
+<text x="432.0" y="571" text-anchor="middle" class="sub">EV + rules</text>
+<rect x="930" y="470" width="64" height="64" rx="12" fill="#2E73B8"/>
+<use href="#i-rack" x="941.52" y="481.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="962.0" y="554" text-anchor="middle" class="lab">Operator</text>
+<text x="962.0" y="571" text-anchor="middle" class="sub">execute + verify</text>
+<rect x="688" y="570" width="64" height="64" rx="12" fill="#2E73B8"/>
+<use href="#i-eye" x="699.52" y="581.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="720.0" y="654" text-anchor="middle" class="lab">Watcher</text>
+<text x="720.0" y="671" text-anchor="middle" class="sub">proactive trigger</text>
+<rect x="688" y="160" width="64" height="64" rx="12" fill="#2E73B8"/>
+<use href="#i-flag" x="699.52" y="171.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="720.0" y="244" text-anchor="middle" class="lab">Checkpointer</text>
+<text x="720.0" y="261" text-anchor="middle" class="sub">durable pause</text>
+<rect x="1335" y="170" width="64" height="64" rx="12" fill="#7B5EA7"/>
+<use href="#i-globe" x="1346.52" y="181.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="1367.0" y="254" text-anchor="middle" class="lab">Nimble</text>
+<text x="1367.0" y="271" text-anchor="middle" class="sub">web search API</text>
+<rect x="1215" y="170" width="64" height="64" rx="12" fill="#E5A50A"/>
+<use href="#i-chip" x="1226.52" y="181.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="1247.0" y="254" text-anchor="middle" class="lab">Liquid</text>
+<text x="1247.0" y="271" text-anchor="middle" class="sub">LFM2.5-VL · local</text>
+<rect x="1455" y="170" width="64" height="64" rx="12" fill="#C7457B"/>
+<use href="#i-sparkle" x="1466.52" y="181.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="1487.0" y="254" text-anchor="middle" class="lab">BFL FLUX.2</text>
+<text x="1487.0" y="271" text-anchor="middle" class="sub">dataset images</text>
+<rect x="1235" y="460" width="64" height="64" rx="12" fill="#D13212"/>
+<use href="#i-monitor" x="1246.52" y="471.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="1267.0" y="544" text-anchor="middle" class="lab">Dashboard</text>
+<text x="1267.0" y="561" text-anchor="middle" class="sub">React + FastAPI</text>
+<rect x="1400" y="460" width="64" height="64" rx="12" fill="#D13212"/>
+<use href="#i-person" x="1411.52" y="471.52" width="40.96" height="40.96" style="color:#FFFFFF"/>
+<text x="1432.0" y="544" text-anchor="middle" class="lab">Reviewer</text>
+<text x="1432.0" y="561" text-anchor="middle" class="sub">decides · flags fraud</text>
+<rect x="1318" y="590" width="56" height="56" rx="12" fill="#D13212"/>
+<use href="#i-loop" x="1328.08" y="600.08" width="35.84" height="35.84" style="color:#FFFFFF"/>
+<text x="1346.0" y="666" text-anchor="middle" class="lab">Precedent</text>
+<text x="1346.0" y="683" text-anchor="middle" class="sub">learned rule</text>
+<rect x="264" y="772" width="52" height="52" rx="12" fill="#3F8624"/>
+<use href="#i-db" x="273.36" y="781.36" width="33.28" height="33.28" style="color:#FFFFFF"/>
+<text x="290.0" y="844" text-anchor="middle" class="lab">Warehouse</text>
+<text x="290.0" y="861" text-anchor="middle" class="sub">orders · returns · products</text>
+<rect x="420" y="772" width="52" height="52" rx="12" fill="#3F8624"/>
+<use href="#i-db" x="429.36" y="781.36" width="33.28" height="33.28" style="color:#FFFFFF"/>
+<text x="446.0" y="844" text-anchor="middle" class="lab">Episodic memory</text>
+<text x="446.0" y="861" text-anchor="middle" class="sub">every agent step</text>
+<rect x="694" y="772" width="52" height="52" rx="12" fill="#3F8624"/>
+<use href="#i-db" x="703.36" y="781.36" width="33.28" height="33.28" style="color:#FFFFFF"/>
+<text x="720.0" y="844" text-anchor="middle" class="lab">Semantic + precedent</text>
+<text x="720.0" y="861" text-anchor="middle" class="sub">prices · human decisions</text>
+<rect x="936" y="772" width="52" height="52" rx="12" fill="#3F8624"/>
+<use href="#i-db" x="945.36" y="781.36" width="33.28" height="33.28" style="color:#FFFFFF"/>
+<text x="962.0" y="844" text-anchor="middle" class="lab">Inventory</text>
+<text x="962.0" y="861" text-anchor="middle" class="sub">unit movements</text>
+<rect x="1241" y="772" width="52" height="52" rx="12" fill="#3F8624"/>
+<use href="#i-db" x="1250.36" y="781.36" width="33.28" height="33.28" style="color:#FFFFFF"/>
+<text x="1267.0" y="844" text-anchor="middle" class="lab">Evidence + telemetry</text>
+<text x="1267.0" y="861" text-anchor="middle" class="sub">sources · LLM calls</text>
+<path d="M189 202 H290 V768" fill="none" stroke="#D86613" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="298" y="520" class="edge">new row</text>
+<path d="M155 556 V474" fill="none" stroke="#C7457B" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<path d="M318 798 C420 798 580 650 684 604" fill="none" stroke="#2E73B8" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<text x="380" y="700" class="edge">poll · proactive trigger</text>
+<path d="M720 568 V462" fill="none" stroke="#2E73B8" stroke-width="1.8" marker-end="url(#ah)"/>
+<path d="M720 268 V326" fill="none" stroke="#2E73B8" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<path d="M676 360 L468 256" fill="none" stroke="#2E73B8" stroke-width="1.8" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<path d="M766 360 L930 256" fill="none" stroke="#2E73B8" stroke-width="1.8" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<path d="M676 400 L468 490" fill="none" stroke="#2E73B8" stroke-width="1.8" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<path d="M766 400 L930 490" fill="none" stroke="#2E73B8" stroke-width="1.8" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<path d="M1367 168 V150 H1160 V202 H998" fill="none" stroke="#7B5EA7" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="1180" y="144" class="edge">live search</text>
+<path d="M1213 214 H1134" fill="none" stroke="#E5A50A" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="1140" y="232" class="edge">vision + text</text>
+<path d="M1134 380 H1267 V456" fill="none" stroke="#D13212" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="1150" y="372" class="edge">escalate</text>
+<path d="M1233 508 H1160 V410 H1136" fill="none" stroke="#D13212" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+<text x="1168" y="500" class="edge">resume</text>
+<path d="M1301 492 H1398" fill="none" stroke="#D13212" stroke-width="1.8" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<path d="M962 582 V768" fill="none" stroke="#3F8624" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="970" y="700" class="edge">write + verify</text>
+<path d="M720 702 V768" fill="none" stroke="#3F8624" stroke-width="1.8" marker-end="url(#ah)" marker-start="url(#ah)"/>
+<text x="728" y="740" class="edge">brief · ledger</text>
+<path d="M1267 768 V566" fill="none" stroke="#3F8624" stroke-width="1.8" marker-end="url(#ah)"/>
+<text x="1274" y="690" class="edge">SQL</text>
+</svg>
