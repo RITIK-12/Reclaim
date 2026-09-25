@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 from typing import Any, Iterable
 
@@ -19,6 +20,12 @@ def now_ms() -> int:
     return int(time.time() * 1000)
 
 
+# RawTree is a shared cluster: we may only touch tables that carry our prefix.
+_TABLE_REF = re.compile(r"\b(?:FROM|JOIN|INTO|TABLE|DESCRIBE)\s+([`\"]?[A-Za-z_][\w.]*[`\"]?)", re.I)
+_CTE_NAME = re.compile(r"(?:\bWITH|,)\s*([A-Za-z_]\w*)\s+AS\s*\(", re.I)
+_SAFE_NAME = re.compile(r"^[a-z][a-z0-9_]*$")
+
+
 class RawTree:
     """Every table name passes through `t()` so all our tables share one prefix."""
 
@@ -29,7 +36,17 @@ class RawTree:
                                   headers={"Authorization": f"Bearer {key}"})
 
     def t(self, name: str) -> str:
-        return f"{self.prefix}{name}"
+        if not _SAFE_NAME.match(name):
+            raise ValueError(f"bad table name {name!r}")
+        return name if name.startswith(self.prefix) else f"{self.prefix}{name}"
+
+    def check_scope(self, sql: str) -> None:
+        """Refuse SQL that references any table outside our prefix (CTE names are fine)."""
+        ctes = {n.lower() for n in _CTE_NAME.findall(sql)}
+        for ref in _TABLE_REF.findall(sql):
+            name = ref.strip('`"')
+            if name.lower() not in ctes and not name.startswith(self.prefix):
+                raise PermissionError(f"RawTree scope: {name!r} is outside {self.prefix}*")
 
     def insert(self, table: str, rows: dict | Iterable[dict], batch: int = 1000) -> int:
         rows = [rows] if isinstance(rows, dict) else list(rows)
@@ -44,7 +61,9 @@ class RawTree:
 
     def query(self, sql: str) -> list[dict]:
         """Run SQL. Write `{tbl}` placeholders as `{t:name}`; they expand to prefixed names."""
-        r = self._http.post("/v1/query", json={"sql": self._expand(sql), "format": "JSON"})
+        sql = self._expand(sql)
+        self.check_scope(sql)
+        r = self._http.post("/v1/query", json={"sql": sql, "format": "JSON"})
         if r.status_code >= 400:
             raise RuntimeError(f"RawTree {r.status_code}: {r.text[:500]}")
         return r.json().get("data", [])

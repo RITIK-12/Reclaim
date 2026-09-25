@@ -32,7 +32,7 @@ class Settings:
     data_dir: Path = ROOT / "data"
     images_dir: Path = field(default_factory=lambda: ROOT / "data" / "images")
     checkpoint_db: Path = field(default_factory=lambda: ROOT / "data" / "checkpoints.sqlite")
-    scenarios_file: Path = field(default_factory=lambda: ROOT / "backend" / "scenarios" / "demo_returns.json")
+    scenarios_file: Path = field(default_factory=lambda: ROOT / "backend" / "scenarios" / "returns.json")
     # Agent knobs
     price_ttl_hours: int = 6
     max_steps: int = 12

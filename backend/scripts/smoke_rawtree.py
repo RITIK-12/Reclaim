@@ -17,4 +17,11 @@ while True:
         break
     time.sleep(0.2)
 print(f"visible after {time.time() - t0:.2f}s:", rows[0])
-print(db.query("SELECT name, type FROM system.columns WHERE table = '{t:smoke}'".replace("{t:smoke}", db.t("smoke"))))
+
+for bad in ["SELECT * FROM system.columns", "SELECT * FROM agent_events", "SELECT 1 FROM reclaim_x JOIN other_team y ON 1"]:
+    try:
+        db.query(bad)
+        print("!!! scope guard missed:", bad)
+    except PermissionError as e:
+        print("blocked:", e)
+print("allowed CTE:", db.query("WITH s AS (SELECT marker FROM {t:smoke}) SELECT count() AS n FROM s"))
