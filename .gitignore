@@ -24,3 +24,6 @@ dist/
 # Local tool config
 .claude/
 *.tsbuildinfo
+
+# Model weights (GGUF), served locally by llama.cpp
+models/

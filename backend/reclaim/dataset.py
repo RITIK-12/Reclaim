@@ -323,3 +323,51 @@ def store_rows(rows: list[Row], store: RawTree = db, max_side: int = 768) -> Non
                        "image_b64": base64.b64encode(buf.getvalue()).decode(), "stored_at_ms": ts})
     for i in range(0, len(images), 20):
         store.insert("dataset_images", images[i:i + 20])
+
+
+# --- replay the dataset through the agent -------------------------------------------------------------------
+def prepare_run_images(rows: list[Row], workers: int = 8) -> None:
+    """Catalog photo per SKU (the Inspector's reference) + a close-up crop as a second dock shot."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from PIL import Image
+
+    from .config import settings
+    from .images import ImageStore
+    store = ImageStore()
+
+    def one(r: Row) -> None:
+        store.catalog(r.sku, r.catalog_image_url)
+        close = settings.images_dir / f"ds_{r.id}_2.jpg"
+        if not close.exists():
+            img = Image.open(settings.images_dir / r.image_file).convert("RGB")
+            w, h = img.size
+            img.crop((int(w * 0.14), int(h * 0.12), int(w * 0.86), int(h * 0.88))).resize((w, h)).save(close, "JPEG",
+                                                                                                        quality=88)
+
+    with ThreadPoolExecutor(workers) as pool:
+        list(pool.map(one, rows))
+
+
+def seed_run(run_id: str, rows: list[Row], store: RawTree = db) -> None:
+    """Orders + ground truth (eval_gt, never read by agents) for a dataset run."""
+    from .rawtree import now_ms
+    now = now_ms()
+    store.insert("orders", [{"run_id": run_id, "order_id": f"ORD-{r.id}", "sku": r.sku, "customer_id": f"C-{r.id}",
+                             "purchased_at_ms": now - r.days_since_purchase * 86_400_000,
+                             "price_paid": round(r.list_price * 0.97, 2)} for r in rows])
+    store.insert("eval_gt", [{"run_id": run_id, "return_id": f"RMA-{r.id}", "key": r.id, "set": r.split,
+                              "seeded_at_ms": now, "category": r.category, "scenario": r.scenario,
+                              "gt_identity": r.expected_identity, "gt_grade": r.expected_grade,
+                              "gt_action": r.expected_action, "gt_escalate": r.expected_action == "ESCALATE",
+                              "gt_fraud": r.scenario in ("escalate/swap", "escalate/apple"), "gt_why": r.expected_rule}
+                             for r in rows])
+
+
+def arrive(run_id: str, r: Row, store: RawTree = db) -> None:
+    from .rawtree import now_ms
+    store.insert("returns", {"run_id": run_id, "return_id": f"RMA-{r.id}", "order_id": f"ORD-{r.id}", "sku": r.sku,
+                             "customer_id": f"C-{r.id}", "reason_text": r.reason_text,
+                             "reason_category": r.reason_category,
+                             "photos": [r.image_file, f"ds_{r.id}_2.jpg"], "received_at_ms": now_ms(),
+                             "scenario_key": r.id})

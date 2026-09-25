@@ -23,7 +23,7 @@ class PriceSource(BaseModel):
 
 
 class PriceExtraction(BaseModel):
-    prices: list[PriceSource]
+    prices: list[PriceSource] = Field(max_length=12)
 
 
 class MarketState(TypedDict, total=False):

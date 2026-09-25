@@ -23,19 +23,22 @@ HumanPolicy = Callable[[str, str, dict], dict | None]
 
 
 class Runner:
-    def __init__(self, on_interrupt: HumanPolicy | None = None):
+    def __init__(self, on_interrupt: HumanPolicy | None = None, workers: int = 1):
         ensure_schema()
         conn = sqlite3.connect(str(settings.checkpoint_db), check_same_thread=False)
         self.supervisor = Supervisor(checkpointer=SqliteSaver(conn))
         self.on_interrupt = on_interrupt
         self.jobs: queue.Queue = queue.Queue()
         self.current: str | None = None
-        self._thread: threading.Thread | None = None
+        self.workers = workers
+        self._threads: list[threading.Thread] = []
 
     def start(self) -> "Runner":
-        if not self._thread:
-            self._thread = threading.Thread(target=self._loop, daemon=True, name="case-runner")
-            self._thread.start()
+        """One worker by default (a single local model serialises work); more for batch evaluation."""
+        while len(self._threads) < self.workers:
+            th = threading.Thread(target=self._loop, daemon=True, name=f"case-runner-{len(self._threads)}")
+            th.start()
+            self._threads.append(th)
         return self
 
     def open_case(self, run_id: str, case_id: str) -> None:

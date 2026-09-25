@@ -1,4 +1,4 @@
-"""Smoke test: 2-image JSON-schema call to the local Liquid VLM; measures latency."""
+"""Smoke test: 2-image JSON-schema call to the local Liquid VLM (llama.cpp); measures latency."""
 from typing import Literal
 
 from pydantic import BaseModel
@@ -15,7 +15,7 @@ class Verdict(BaseModel):
     confidence: float
 
 
-imgs = [settings.images_dir / "smoke_iphone.jpg", settings.images_dir / "smoke_apple.jpg"]
+imgs = [settings.images_dir / "cat_B0BZ9N1QQC.jpg", settings.images_dir / "ext_apple.jpg"]
 for i in range(2):
     v, log = llm.structured(Verdict, "You are a warehouse returns inspector. Answer in JSON.",
                             "Image 1 is the catalog photo. Image 2 is what arrived at the dock. "

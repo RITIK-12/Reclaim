@@ -41,7 +41,7 @@ class CaseState(TypedDict, total=False):
 
 class RouteChoice(BaseModel):
     next: Literal["research_more", "decide"]
-    reason: str = Field(description="One short sentence")
+    reason: str = Field(max_length=160, description="One short sentence")
 
 
 ROUTER_SYSTEM = ("You supervise a warehouse returns team. Pick the next step for this case. Prefer acting "
@@ -231,7 +231,8 @@ class Supervisor:
             case["product"]["category"], insp.get("defect_class", "unknown"), case["return"]["reason_category"],
             insp.get("grade", "D"))
         fraud = bool(human.get("fraud_flag"))
-        self.memory.record_decision(case["run_id"], case["case_id"], action, "human", key, human.get("note", ""),
+        by = "simulated_human" if human.get("by") == "simulated" else "human"  # simulated: never a precedent
+        self.memory.record_decision(case["run_id"], case["case_id"], action, by, key, human.get("note", ""),
                                     fraud_flag=fraud, note=human.get("note", ""),
                                     ev=(s.get("decision") or {}).get("ev"))
         self.log(case, "human.decided", f"Human chose {action}" + (" and flagged fraud" if fraud else "") +

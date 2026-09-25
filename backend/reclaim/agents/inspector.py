@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import re
 from difflib import SequenceMatcher
-from typing import Literal, TypedDict
+from typing import Annotated, Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel, Field
@@ -32,12 +32,15 @@ KEYWORDS = [("earbuds", r"earbud|earphone|in-ear"), ("headphones", r"headphone|h
             ("case_protector", r"case|screen protector|cover"), ("other_accessory", r"antenna|band|strap|mount")]
 
 
+Short = Annotated[str, Field(max_length=50)]
+
+
 class Observation(BaseModel):
-    observed_object: str = Field(description="What the object is, in a few words")
+    observed_object: str = Field(max_length=60, description="What the object is, in a few words")
     category_guess: Literal[GUESSES]  # type: ignore[valid-type]
-    visible_text: str = Field(description="Brand or model text printed on the item, or empty")
-    color: str
-    visible_damage: list[str] = Field(description="Cracks, scratches, dents, fraying... [] if none")
+    visible_text: str = Field(max_length=60, description="Brand or model text printed on the item, or empty")
+    color: str = Field(max_length=40)
+    visible_damage: list[Short] = Field(max_length=4, description="Cracks, scratches, dents, fraying... [] if none")
     condition_grade: Literal["A", "B", "C", "D"] = Field(description="A like new, B light wear, C visible damage, D broken")
     photo_quality: Literal["good", "poor"]
 
@@ -46,8 +49,8 @@ class IdentityVerdict(BaseModel):
     same_product_type: Literal["yes", "no"]
     same_brand: Literal["yes", "no", "cannot_tell"]
     verdict: Literal["match", "mismatch", "uncertain"]
-    confidence: float = Field(ge=0, le=1)
-    reason: str = Field(description="One short sentence")
+    confidence_pct: int = Field(ge=0, le=100)
+    reason: str = Field(max_length=160, description="One short sentence")
 
 
 class InspectState(TypedDict, total=False):
@@ -135,6 +138,7 @@ class Inspector(SubAgent):
                 f"Item received at the dock shows: {dock['observed_object']}; color {dock['color']}; "
                 f"text on item: \"{dock['visible_text']}\".\nIs the received item the same product as ordered?")
         v = self.ask(case, IdentityVerdict, VERIFY_SYSTEM, text, node="verify").model_dump()
+        v["confidence"] = v.pop("confidence_pct") / 100
         self.log(case, "inspector.verify", f"{v['verdict']} ({v['confidence']:.2f}): {v['reason']}", v)
         return {"verdict": v}
 

@@ -27,8 +27,8 @@ class Settings:
     # Black Forest Labs (FLUX.2) for synthetic dock photos
     bfl_url: str = _env("BFL_URL", "https://api.bfl.ai")
     bfl_key: str = _env("BFL_API_KEY")
-    # Liquid via LM Studio (one model for vision + text)
-    llm_url: str = _env("LLM_URL", "http://localhost:1234/v1")
+    # Liquid LFM2.5-VL-3B served from ./models by llama.cpp (one model for vision + text)
+    llm_url: str = _env("LLM_URL", "http://localhost:8080/v1")  # llama.cpp: backend/scripts/serve_model.sh
     llm_model: str = _env("LLM_MODEL", "lfm2.5-vl-3b")
     image_max_side: int = int(_env("IMAGE_MAX_SIDE", "768"))
     # Local paths

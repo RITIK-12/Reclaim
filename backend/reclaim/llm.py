@@ -1,4 +1,4 @@
-"""Liquid LFM2.5-VL via LM Studio (OpenAI-compatible). One model for vision and text."""
+"""Liquid LFM2.5-VL via an OpenAI-compatible local server (llama.cpp llama-server). One model for vision and text."""
 from __future__ import annotations
 
 import base64
@@ -38,7 +38,7 @@ class CallLog(BaseModel):
 
 class LiquidLLM:
     def __init__(self, model: str = settings.llm_model, base_url: str = settings.llm_url):
-        self.chat = ChatOpenAI(model=model, base_url=base_url, api_key="lm-studio",
+        self.chat = ChatOpenAI(model=model, base_url=base_url, api_key="local",
                                temperature=0.1, max_tokens=500, timeout=180)
 
     def structured(self, schema: type[T], system: str, text: str,
@@ -51,7 +51,12 @@ class LiquidLLM:
         last_err: Exception | None = None
         for _ in range(2):
             t0 = time.time()
-            out = runnable.invoke(messages)
+            try:
+                out = runnable.invoke(messages)
+            except Exception as e:  # noqa: BLE001 - e.g. output cut off at max_tokens: retry once, shorter
+                last_err = e
+                messages = messages + [HumanMessage("Your answer was cut off. Reply again with short, valid JSON.")]
+                continue
             raw = out["raw"]
             usage = getattr(raw, "usage_metadata", None) or {}
             log = CallLog(node=node, latency_ms=int((time.time() - t0) * 1000),
