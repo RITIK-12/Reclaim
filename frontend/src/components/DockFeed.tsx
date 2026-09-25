@@ -2,21 +2,21 @@ import type { CaseRow } from "../api";
 import { img, usd } from "../api";
 import { ActionBadge, StatusChip } from "./ui";
 
-export default function DockFeed({ cases, selected, onSelect, pinned, onFollow }: {
-  cases: CaseRow[]; selected: string | null; onSelect: (id: string) => void; pinned: boolean; onFollow: () => void;
+export default function DockFeed({ cases, selected, onSelect, follow, onToggleFollow }: {
+  cases: CaseRow[]; selected: string | null; onSelect: (id: string) => void; follow: boolean; onToggleFollow: () => void;
 }) {
   return (
     <aside className="flex min-h-0 flex-col">
       <div className="flex items-center justify-between px-1 pb-2">
-        <h2 className="label">Receiving dock · live feed</h2>
-        {pinned
-          ? <button onClick={onFollow} className="font-mono text-[10px] text-live hover:underline">follow the agent ↻</button>
-          : <span className="font-mono text-[10px] text-muted">{cases.length} · following agent</span>}
+        <h2 className="label">Receiving dock · {cases.length} returns</h2>
+        <button onClick={onToggleFollow} className={`rounded border px-1.5 py-0.5 font-mono text-[10px] ${follow ? "border-live bg-blue-50 text-live" : "border-line text-muted hover:text-ink"}`}>
+          follow agent: {follow ? "on" : "off"}
+        </button>
       </div>
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
         {cases.length === 0 && (
           <div className="card p-6 text-center text-sm text-muted">
-            No returns yet. Press <b className="text-ink">NEW SHIFT</b>: returns land in RawTree and the agent picks each one up by itself.
+            No returns yet. Press <b className="text-ink">START SHIFT</b>: returns land in RawTree and the agent picks each one up by itself.
           </div>
         )}
         {cases.map((c) => (

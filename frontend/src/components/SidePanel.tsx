@@ -75,27 +75,6 @@ function Memory({ runId }: { runId: string }) {
   );
 }
 
-function Eval({ runId }: { runId: string }) {
-  const ev = usePoll<any>(runId ? "/api/eval" : null, 4000);
-  const m = ev?.metrics;
-  if (!m || !m.completed) return null;
-  const row = (label: string, v: any, good?: boolean) => (
-    <div className="flex justify-between font-mono text-[11px]"><span className="text-muted">{label}</span><span className={good === undefined ? "" : good ? "text-go" : "text-fraud"}>{v ?? "—"}</span></div>
-  );
-  return (
-    <Card title="Evaluation vs ground truth" tag={<span className="font-mono text-[10px] text-muted">{m.completed}/{m.cases} labelled</span>}>
-      {row("action accuracy", `${m.action_accuracy}%`)}
-      {row("identity accuracy", `${m.identity_accuracy}%`)}
-      {row("fraud catch rate", m.fraud_catch_rate === null ? "—" : `${m.fraud_catch_rate}%`)}
-      {row("unsafe auto-resolves", m.unsafe_auto_resolves, m.unsafe_auto_resolves === 0)}
-      {row("false escalations", m.false_escalations)}
-      {row("condition grade exact / ±1", `${m.grade_accuracy ?? "—"}% / ${m.grade_within_one ?? "—"}%`)}
-      {row("extra recovered vs liquidate-all", `$${Math.round(m.uplift_vs_liquidate_usd ?? 0)}`)}
-      {row("avg secs to decision", m.avg_secs_to_decision)}
-    </Card>
-  );
-}
-
 export default function SidePanel({ escalations, runId, onOpen }: { escalations: CaseRow[]; runId: string; onOpen: (id: string) => void }) {
   return (
     <aside className="min-h-0 space-y-3 overflow-y-auto pr-1">
@@ -106,7 +85,6 @@ export default function SidePanel({ escalations, runId, onOpen }: { escalations:
         </div>
       </Card>
       <Memory runId={runId} />
-      <Eval runId={runId} />
     </aside>
   );
 }

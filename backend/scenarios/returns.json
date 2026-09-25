@@ -47,6 +47,32 @@
    }
   },
   {
+   "key": "DS001",
+   "set": "demo",
+   "stage": "shift",
+   "sku": "B0BZ9N1QQC",
+   "customer_id": "C-DS001",
+   "days_since_purchase": 12,
+   "reason_text": "Phone won't turn on.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "flux",
+    "effect": "none"
+   },
+   "photos": [
+    "ds_DS001.jpg",
+    "ds_DS001_2.jpg"
+   ],
+   "gt": {
+    "identity": "mismatch",
+    "grade": "-",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "R1 identity_mismatch"
+   }
+  },
+  {
    "key": "DS053",
    "set": "demo",
    "stage": "shift",
@@ -67,32 +93,6 @@
     "identity": "match",
     "grade": "A",
     "action": "RETURN_TO_VENDOR",
-    "escalate": false,
-    "fraud": false,
-    "why": "max EV among allowed"
-   }
-  },
-  {
-   "key": "DS069",
-   "set": "demo",
-   "stage": "shift",
-   "sku": "B0CFDZ8QPS",
-   "customer_id": "C-DS069",
-   "days_since_purchase": 41,
-   "reason_text": "Fell down the stairs and broke apart.",
-   "reason_category": "physical_damage",
-   "photo": {
-    "source": "flux",
-    "effect": "none"
-   },
-   "photos": [
-    "ds_DS069.jpg",
-    "ds_DS069_2.jpg"
-   ],
-   "gt": {
-    "identity": "match",
-    "grade": "D",
-    "action": "LIQUIDATE",
     "escalate": false,
     "fraud": false,
     "why": "max EV among allowed"
@@ -125,29 +125,29 @@
    }
   },
   {
-   "key": "DS001",
+   "key": "DS069",
    "set": "demo",
    "stage": "shift",
-   "sku": "B0BZ9N1QQC",
-   "customer_id": "C-DS001",
-   "days_since_purchase": 12,
-   "reason_text": "Phone won't turn on.",
-   "reason_category": "functional",
+   "sku": "B0CFDZ8QPS",
+   "customer_id": "C-DS069",
+   "days_since_purchase": 41,
+   "reason_text": "Fell down the stairs and broke apart.",
+   "reason_category": "physical_damage",
    "photo": {
     "source": "flux",
     "effect": "none"
    },
    "photos": [
-    "ds_DS001.jpg",
-    "ds_DS001_2.jpg"
+    "ds_DS069.jpg",
+    "ds_DS069_2.jpg"
    ],
    "gt": {
-    "identity": "mismatch",
-    "grade": "-",
-    "action": "ESCALATE",
-    "escalate": true,
-    "fraud": true,
-    "why": "R1 identity_mismatch"
+    "identity": "match",
+    "grade": "D",
+    "action": "LIQUIDATE",
+    "escalate": false,
+    "fraud": false,
+    "why": "max EV among allowed"
    }
   },
   {

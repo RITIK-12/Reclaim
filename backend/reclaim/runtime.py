@@ -47,6 +47,17 @@ class Runner:
     def resume(self, run_id: str, case_id: str, decision: dict) -> None:
         self.jobs.put(("resume", run_id, case_id, decision))
 
+    def drop_queued(self) -> int:
+        """Forget queued jobs (a new shift starts); the case already running finishes normally."""
+        dropped = 0
+        while True:
+            try:
+                self.jobs.get_nowait()
+            except queue.Empty:
+                return dropped
+            self.jobs.task_done()
+            dropped += 1
+
     def continue_case(self, run_id: str, case_id: str) -> None:
         """Pick a case back up from its last checkpoint (after a crash or restart)."""
         self.jobs.put(("continue", run_id, case_id, None))

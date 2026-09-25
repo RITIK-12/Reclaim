@@ -67,6 +67,7 @@ class App:
         """New shift (fresh run_id = fresh memory namespace) or more arrivals into the current one."""
         if new_run or not self.run_id:
             self._stop_replay.set()
+            self.runner.drop_queued()
             self._stop_replay = threading.Event()
             self.run_id = self.replay.new_run_id("eval" if which == "eval" else "shift")
             RUN_FILE.write_text(self.run_id)

@@ -73,6 +73,7 @@ VERIFY_SYSTEM = ("You check whether a returned item is the product that was orde
                  "Judge only product type, shape and brand/model text. Ignore damage and condition (a cracked "
                  "unit of the same model is the same product), and ignore angle, lighting, background and "
                  "whatever is shown on a screen.")
+PACKAGING = re.compile(r"\b(box|boxes|packag\w*|carton|wrap\w*|tape|seal)\b", re.I)
 NO_DAMAGE = re.compile(r"^(none|no|n/?a|nothing|no damage|no visible damage|like new|a like new|good|intact)\.?$", re.I)
 
 
@@ -174,7 +175,11 @@ class Inspector(SubAgent):
     @staticmethod
     def _sanity(obs: dict) -> dict:
         """Clean up small-model quirks: 'none' listed as damage, a crack graded as B, a wrong enum value."""
-        obs["visible_damage"] = [d for d in obs["visible_damage"] if len(d.strip()) > 2 and not NO_DAMAGE.match(d.strip())]
+        damage = [d for d in obs["visible_damage"] if len(d.strip()) > 2 and not NO_DAMAGE.match(d.strip())]
+        obs["packaging_damage"] = [d for d in damage if PACKAGING.search(d)]  # a crushed box is not a broken product
+        obs["visible_damage"] = [d for d in damage if not PACKAGING.search(d)]
+        if obs["packaging_damage"] and not obs["visible_damage"] and obs["condition_grade"] in ("C", "D"):
+            obs["condition_grade"] = "B"
         seen = " ".join(obs["visible_damage"]).lower()
         if re.search(r"crack|shatter|broken|smash", seen) and obs["condition_grade"] in ("A", "B"):
             obs["condition_grade"] = "C"

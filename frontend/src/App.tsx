@@ -14,30 +14,37 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const detail = usePoll<CaseDetail>(selected ? `/api/cases/${selected}?run=${runId}` : null, 1200);
 
-  // Follow the agent: move only when it starts a new case or a case starts waiting for a human.
-  // Never re-select on a plain poll, or the page jumps every time a new return arrives.
-  const [pinned, setPinned] = useState(false);
+  // The page never changes the case you are looking at on its own: it shows the first arrival, then stays
+  // wherever you click. "Follow agent" is opt-in.
+  const [follow, setFollow] = useState(false);
   const current = state?.current_case ?? null;
-  const waiting = cases.find((c) => c.status === "ESCALATED")?.case_id ?? null;
-  const target = current ?? waiting;
   const lastTarget = useRef<string | null>(null);
   useEffect(() => {
-    if (pinned) return;
-    if (target && target !== lastTarget.current) { lastTarget.current = target; setSelected(target); }
-    else if (!selected && cases.length) setSelected(cases[0].case_id);
-  }, [target, pinned, cases.length, selected]);
-  useEffect(() => { setPinned(false); setSelected(null); lastTarget.current = null; }, [runId]);
+    if (!selected && cases.length) setSelected(cases[cases.length - 1].case_id);  // list is newest-first
+  }, [cases.length, selected]);
+  useEffect(() => {
+    if (follow && current && current !== lastTarget.current) { lastTarget.current = current; setSelected(current); }
+  }, [current, follow]);
+  useEffect(() => { setSelected(null); lastTarget.current = null; }, [runId]);
+  const open = (id: string) => { setFollow(false); setSelected(id); };
 
-  const open = (id: string) => { setPinned(true); setSelected(id); };
+  // Keep the previous case on screen (dimmed) while the next one loads, so switching never blanks the page.
+  const [shown, setShown] = useState<CaseDetail | null>(null);
+  useEffect(() => { if (detail) setShown(detail); }, [detail]);
+  useEffect(() => { setShown(null); }, [runId]);
+  const view = detail ?? (selected ? shown : null);
+
   const escalations = cases.filter((c) => c.status === "ESCALATED");
 
   return (
     <div className="flex h-full flex-col">
       <Header kpis={kpis} runId={runId} current={state?.current_case ?? null} />
       <main className="grid min-h-0 flex-1 grid-cols-[290px_1fr_320px] gap-4 p-4 2xl:grid-cols-[340px_1fr_370px]">
-        <DockFeed cases={cases} selected={selected} onSelect={open} pinned={pinned} onFollow={() => setPinned(false)} />
+        <DockFeed cases={cases} selected={selected} onSelect={open} follow={follow} onToggleFollow={() => setFollow((f) => !f)} />
         <section className="min-h-0 overflow-y-auto pr-1">
-          <CaseView c={detail} />
+          <div className={view && view !== detail ? "opacity-60 transition-opacity" : "transition-opacity"}>
+            <CaseView c={view} />
+          </div>
         </section>
         <SidePanel escalations={escalations} runId={runId} onOpen={open} />
       </main>

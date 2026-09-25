@@ -16,7 +16,7 @@ for s in [r for r in book.returns("all") if r["key"] in wanted]:
     p = warehouse.product(s["sku"])
     case = {"run_id": run_id, "case_id": f"RMA-{s['key']}", "unit_id": "U-probe",
             "return": {"reason_text": s["reason_text"], "reason_category": s["reason_category"],
-                       "photos": book.photo_names(s["key"]), "sku": s["sku"]},
+                       "photos": book.photos_for(s), "sku": s["sku"]},
             "product": {k: p.get(k) for k in ("sku", "title", "brand", "category", "list_price")}}
     t0 = time.time()
     res = inspector.run(case)
