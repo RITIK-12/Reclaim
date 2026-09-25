@@ -1,0 +1,277 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+  <defs>
+    <style>
+      .serif { font-family: "CMU Serif", "Latin Modern Roman", "Computer Modern", Georgia, "Times New Roman", serif; }
+      .mono { font-family: Menlo, "CMU Typewriter Text", "SF Mono", monospace; }
+      .title { font-size: 42px; fill: #FFFFFF; }
+      .subtitle { font-size: 18px; fill: #BBBBBB; }
+      .zone { font-size: 12px; letter-spacing: 2.6px; }
+      .h { font-size: 17px; fill: #F4F4F4; }
+      .s { font-size: 12.5px; fill: #A3AEB6; }
+      .tbl { font-size: 12.5px; fill: #E6F1E0; }
+      .tbls { font-size: 10.5px; fill: #93A48C; }
+      .edge { font-size: 11px; fill: #8FA3AD; }
+      .ico { fill: none; stroke: currentColor; stroke-width: 1.45; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#29ABCA" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <pattern id="grid5" width="200" height="200" patternUnits="userSpaceOnUse">
+      <path d="M200 0H0V200" fill="none" stroke="#29ABCA" stroke-opacity="0.11" stroke-width="1"/>
+    </pattern>
+
+    <marker id="aGold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F0AC5F"/></marker>
+    <marker id="aBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#58C4DD"/></marker>
+    <marker id="aYellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F7D96F"/></marker>
+    <marker id="aPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#B189C6"/></marker>
+    <marker id="aGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#83C167"/></marker>
+    <marker id="aRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#FC6255"/></marker>
+    <marker id="aMaroon" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#E07A93"/></marker>
+
+    <!-- line icons (24x24) -->
+    <symbol id="i-box" viewBox="0 0 24 24"><g class="ico"><path d="M12 2.5 20.5 7v10L12 21.5 3.5 17V7z"/><path d="M3.5 7 12 11.5 20.5 7M12 11.5v10"/><path d="M7.8 4.8l8.4 4.5"/></g></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><g class="ico"><rect x="2.5" y="6.5" width="19" height="13.5" rx="3"/><circle cx="12" cy="13.2" r="3.8"/><path d="M8.5 6.5 10 4h4l1.5 2.5"/></g></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><g class="ico"><path d="M6 2.5h12v19l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5-2 1.5z"/><path d="M9 7h6M9 10.5h6M9 14h4"/></g></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><g class="ico"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/></g></symbol>
+    <symbol id="i-hub" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="12" r="3.2"/><circle cx="4" cy="4.5" r="1.8"/><circle cx="20" cy="4.5" r="1.8"/><circle cx="4" cy="19.5" r="1.8"/><circle cx="20" cy="19.5" r="1.8"/><path d="M9.6 9.7 5.3 5.8M14.4 9.7l4.3-3.9M9.6 14.3l-4.3 3.9M14.4 14.3l4.3 3.9"/></g></symbol>
+    <symbol id="i-lens" viewBox="0 0 24 24"><g class="ico"><circle cx="10" cy="10" r="6.5"/><path d="M14.8 14.8 21 21"/><path d="M6.6 10s1.4-2.4 3.4-2.4 3.4 2.4 3.4 2.4-1.4 2.4-3.4 2.4S6.6 10 6.6 10z"/></g></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4.2" ry="9.5"/><path d="M2.5 12h19M4.3 7h15.4M4.3 17h15.4"/></g></symbol>
+    <symbol id="i-scales" viewBox="0 0 24 24"><g class="ico"><path d="M12 3v17M6 6h12M8 20.5h8"/><path d="M6 6 3 12.5h6zM18 6l-3 6.5h6z"/></g></symbol>
+    <symbol id="i-rack" viewBox="0 0 24 24"><g class="ico"><rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M3 9.5h18M3 15.5h18"/><path d="M8.6 12.6l1.8 1.7 3.8-3.8"/><path d="M6 6.2h4M14 18.4h4"/></g></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><g class="ico"><ellipse cx="12" cy="5" rx="8" ry="2.8"/><path d="M4 5v14c0 1.6 3.6 2.8 8 2.8s8-1.2 8-2.8V5"/><path d="M4 12c0 1.6 3.6 2.8 8 2.8s8-1.2 8-2.8"/></g></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><g class="ico"><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2.5V6M12 2.5V6M15 2.5V6M9 18v3.5M12 18v3.5M15 18v3.5M2.5 9H6M2.5 12H6M2.5 15H6M18 9h3.5M18 12h3.5M18 15h3.5"/><path d="M10 9.3v5.4h4"/></g></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="7.5" r="4"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5"/></g></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><g class="ico"><rect x="2" y="3.5" width="20" height="13" rx="2"/><path d="M8.5 21h7M12 16.5V21"/><path d="M5.5 13l3.5-4 3 2.5 4.5-5"/></g></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><g class="ico"><path d="M11 3.5l1.9 7.1 7.1 1.9-7.1 1.9L11 21.5l-1.9-7.1L2 12.5l7.1-1.9z"/><path d="M19.5 2.5v4M17.5 4.5h4"/></g></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><g class="ico"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 3.5v5h-5"/></g></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><g class="ico"><circle cx="12" cy="12" r="9.5"/><path d="M9.5 8v8M14.5 8v8"/></g></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><g class="ico"><path d="M5 21V3.5"/><path d="M5 4h12l-3 4 3 4H5"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g class="ico"><path d="M12 2.5 20 5.5v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></g></symbol>
+  </defs>
+
+  <!-- canvas -->
+  <rect width="1600" height="1000" fill="#111316"/>
+  <rect width="1600" height="1000" fill="url(#grid)"/>
+  <rect width="1600" height="1000" fill="url(#grid5)"/>
+
+  <!-- title -->
+  <text x="48" y="74" class="serif title">Reclaim <tspan fill="#8C969E" font-size="30">· architecture</tspan></text>
+  <text x="50" y="106" class="serif subtitle">An autonomous returns desk:
+    <tspan fill="#F7D96F">Liquid sees</tspan> · <tspan fill="#B189C6">Nimble prices</tspan> · <tspan fill="#83C167">RawTree remembers</tspan></text>
+
+  <!-- ===================== SYNTHETIC DATA (BFL) ===================== -->
+  <rect x="40" y="128" width="300" height="128" rx="16" fill="#E07A93" fill-opacity="0.05" stroke="#E07A93" stroke-width="1.4" stroke-dasharray="6 5"/>
+  <text x="60" y="152" class="mono zone" fill="#E07A93">SYNTHETIC RETURNS</text>
+  <use href="#i-sparkle" x="58" y="166" width="46" height="46" style="color:#E07A93"/>
+  <text x="116" y="184" class="serif h">FLUX.2 [max] · BFL</text>
+  <text x="116" y="204" class="serif s">catalog photo → returned unit</text>
+  <text x="116" y="222" class="serif s">100 labelled returns (5 × 20)</text>
+  <text x="116" y="240" class="serif s">+ one apple</text>
+  <line x1="190" y1="256" x2="190" y2="288" stroke="#E07A93" stroke-width="1.6" stroke-dasharray="4 4" marker-end="url(#aMaroon)"/>
+  <text x="200" y="277" class="mono edge">replayed as dock scans</text>
+
+  <!-- ===================== RECEIVING DOCK ===================== -->
+  <rect x="40" y="292" width="300" height="410" rx="16" fill="#F0AC5F" fill-opacity="0.05" stroke="#F0AC5F" stroke-width="1.4"/>
+  <text x="60" y="318" class="mono zone" fill="#F0AC5F">RECEIVING DOCK</text>
+  <use href="#i-box" x="58" y="338" width="48" height="48" style="color:#F0AC5F"/>
+  <text x="120" y="358" class="serif h">Returned unit</text>
+  <text x="120" y="378" class="serif s">arrives at the warehouse</text>
+  <use href="#i-camera" x="58" y="420" width="48" height="48" style="color:#F0AC5F"/>
+  <text x="120" y="440" class="serif h">Dock photos</text>
+  <text x="120" y="460" class="serif s">shot on arrival, two angles</text>
+  <use href="#i-receipt" x="58" y="502" width="48" height="48" style="color:#F0AC5F"/>
+  <text x="120" y="522" class="serif h">Order + reason</text>
+  <text x="120" y="542" class="serif s">“left earbud stopped charging”</text>
+  <line x1="60" y1="588" x2="320" y2="588" stroke="#F0AC5F" stroke-opacity="0.25"/>
+  <text x="60" y="616" class="mono edge" fill="#F0AC5F">scan → a new row in</text>
+  <text x="60" y="634" class="mono edge" fill="#F0AC5F">reclaim_returns</text>
+  <text x="60" y="662" class="serif s">That row is the only trigger:</text>
+  <text x="60" y="680" class="serif s">nobody prompts the agent.</text>
+
+  <!-- ===================== ON-DEVICE MODEL ===================== -->
+  <rect x="440" y="128" width="420" height="128" rx="16" fill="#F7D96F" fill-opacity="0.05" stroke="#F7D96F" stroke-width="1.4"/>
+  <text x="460" y="152" class="mono zone" fill="#F7D96F">ON-DEVICE MODEL</text>
+  <use href="#i-chip" x="458" y="166" width="60" height="60" style="color:#F7D96F"/>
+  <text x="532" y="186" class="serif h">Liquid LFM2.5-VL-3B</text>
+  <text x="532" y="206" class="serif s">llama.cpp · F16 GGUF from ./models</text>
+  <text x="532" y="224" class="serif s">one model for vision and text</text>
+  <text x="532" y="242" class="serif s">grammar-constrained JSON outputs</text>
+
+  <!-- ===================== LIVE WEB ===================== -->
+  <rect x="900" y="128" width="280" height="128" rx="16" fill="#B189C6" fill-opacity="0.05" stroke="#B189C6" stroke-width="1.4"/>
+  <text x="920" y="152" class="mono zone" fill="#B189C6">LIVE WEB</text>
+  <use href="#i-globe" x="918" y="168" width="52" height="52" style="color:#B189C6"/>
+  <text x="984" y="186" class="serif h">Nimble search</text>
+  <text x="984" y="206" class="serif s">real-time market prices</text>
+  <text x="984" y="224" class="serif s">new · used · refurb · open box</text>
+  <text x="984" y="242" class="serif s">every source kept, timestamped</text>
+
+  <!-- ===================== AGENT RUNTIME ===================== -->
+  <rect x="380" y="282" width="800" height="420" rx="18" fill="#58C4DD" fill-opacity="0.045" stroke="#58C4DD" stroke-width="1.6"/>
+  <text x="404" y="308" class="mono zone" fill="#58C4DD">LANGGRAPH RUNTIME</text>
+
+  <!-- supervisor hub -->
+  <circle cx="780" cy="500" r="76" fill="#58C4DD" fill-opacity="0.10" stroke="#58C4DD" stroke-width="2"/>
+  <circle cx="780" cy="500" r="88" fill="none" stroke="#58C4DD" stroke-opacity="0.25" stroke-dasharray="3 6"/>
+  <use href="#i-hub" x="754" y="444" width="52" height="52" style="color:#FFFFFF"/>
+  <text x="780" y="522" text-anchor="middle" class="serif h" font-size="19">Supervisor</text>
+  <text x="780" y="540" text-anchor="middle" class="serif s" font-size="11.5">rules + Liquid routing</text>
+
+  <!-- spokes -->
+  <g stroke="#58C4DD" stroke-width="1.6" fill="none">
+    <line x1="706" y1="482" x2="646" y2="466"/>
+    <line x1="854" y1="482" x2="914" y2="466"/>
+    <line x1="720" y1="546" x2="646" y2="600"/>
+    <line x1="840" y1="546" x2="914" y2="600"/>
+  </g>
+
+  <!-- sub-agents -->
+  <rect x="404" y="420" width="240" height="92" rx="12" fill="#58C4DD" fill-opacity="0.07" stroke="#58C4DD" stroke-width="1.2"/>
+  <use href="#i-lens" x="416" y="432" width="40" height="40" style="color:#F7D96F"/>
+  <text x="466" y="447" class="serif h">Inspector</text>
+  <text x="466" y="467" class="serif s">blind look · catalog profile</text>
+  <text x="466" y="484" class="serif s">text verify · guard rules</text>
+  <text x="466" y="501" class="serif s">re-inspects when unsure</text>
+
+  <rect x="916" y="420" width="240" height="92" rx="12" fill="#58C4DD" fill-opacity="0.07" stroke="#58C4DD" stroke-width="1.2"/>
+  <use href="#i-globe" x="928" y="432" width="40" height="40" style="color:#B189C6"/>
+  <text x="978" y="447" class="serif h">Market Analyst</text>
+  <text x="978" y="467" class="serif s">two live searches per case</text>
+  <text x="978" y="484" class="serif s">Liquid extracts, code validates</text>
+  <text x="978" y="501" class="serif s">remembers prices for 6 h</text>
+
+  <rect x="404" y="560" width="240" height="84" rx="12" fill="#58C4DD" fill-opacity="0.07" stroke="#58C4DD" stroke-width="1.2"/>
+  <use href="#i-scales" x="416" y="572" width="40" height="40" style="color:#58C4DD"/>
+  <text x="466" y="586" class="serif h">Decision policy</text>
+  <text x="466" y="606" class="serif s">expected value per action</text>
+  <text x="466" y="623" class="serif s">constraints · escalation rules</text>
+
+  <rect x="916" y="560" width="240" height="84" rx="12" fill="#58C4DD" fill-opacity="0.07" stroke="#58C4DD" stroke-width="1.2"/>
+  <use href="#i-rack" x="928" y="572" width="40" height="40" style="color:#83C167"/>
+  <text x="978" y="586" class="serif h">Operator</text>
+  <text x="978" y="606" class="serif s">executes the disposition</text>
+  <text x="978" y="623" class="serif s">verifies by reading it back</text>
+
+  <!-- checkpointer + watcher -->
+  <rect x="670" y="318" width="210" height="56" rx="10" fill="#111316" stroke="#58C4DD" stroke-width="1.1" stroke-dasharray="4 4"/>
+  <use href="#i-flag" x="680" y="330" width="32" height="32" style="color:#58C4DD"/>
+  <text x="718" y="341" class="serif h" font-size="15">Checkpointer</text>
+  <text x="718" y="360" class="serif s" font-size="11.5">SQLite · durable interrupt()</text>
+  <line x1="775" y1="374" x2="775" y2="422" stroke="#58C4DD" stroke-width="1.2" stroke-dasharray="2 4"/>
+
+  <rect x="670" y="616" width="210" height="58" rx="10" fill="#111316" stroke="#58C4DD" stroke-width="1.1"/>
+  <use href="#i-eye" x="680" y="629" width="32" height="32" style="color:#58C4DD"/>
+  <text x="718" y="640" class="serif h" font-size="15">Watcher</text>
+  <text x="718" y="659" class="serif s" font-size="11.5">new row → opens a case</text>
+  <line x1="780" y1="616" x2="780" y2="582" stroke="#58C4DD" stroke-width="1.6" marker-end="url(#aBlue)"/>
+
+  <!-- model / web links -->
+  <line x1="624" y1="256" x2="624" y2="418" stroke="#F7D96F" stroke-width="1.6" marker-end="url(#aYellow)"/>
+  <text x="632" y="302" class="mono edge">photos → JSON</text>
+  <line x1="850" y1="256" x2="998" y2="418" stroke="#F7D96F" stroke-width="1.6" marker-end="url(#aYellow)"/>
+  <text x="916" y="300" class="mono edge">price extraction</text>
+  <line x1="1090" y1="256" x2="1090" y2="418" stroke="#B189C6" stroke-width="1.6" marker-end="url(#aPurple)"/>
+  <text x="1098" y="340" class="mono edge">results</text>
+
+  <!-- ===================== HUMAN IN THE LOOP ===================== -->
+  <rect x="1220" y="128" width="340" height="574" rx="16" fill="#FC6255" fill-opacity="0.045" stroke="#FC6255" stroke-width="1.4"/>
+  <text x="1240" y="152" class="mono zone" fill="#FC6255">HUMAN IN THE LOOP</text>
+
+  <use href="#i-monitor" x="1238" y="170" width="48" height="48" style="color:#FC6255"/>
+  <text x="1300" y="190" class="serif h">Dashboard</text>
+  <text x="1300" y="210" class="serif s">React + FastAPI · live dock feed</text>
+  <text x="1300" y="228" class="serif s">stepwise case view · KPIs</text>
+
+  <use href="#i-person" x="1238" y="276" width="48" height="48" style="color:#FC6255"/>
+  <text x="1300" y="296" class="serif h">Escalation inbox</text>
+  <text x="1300" y="316" class="serif s">pick an action · flag fraud</text>
+  <text x="1300" y="334" class="serif s">note for the record</text>
+
+  <line x1="1180" y1="306" x2="1232" y2="306" stroke="#FC6255" stroke-width="1.8" marker-end="url(#aRed)"/>
+  <line x1="1232" y1="340" x2="1182" y2="340" stroke="#FC6255" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#aRed)"/>
+  <text x="1300" y="368" class="mono edge" fill="#FC6255">← interrupt(): evidence packet</text>
+  <text x="1300" y="386" class="mono edge" fill="#FC6255">→ resume exactly where it paused</text>
+
+  <use href="#i-loop" x="1240" y="420" width="44" height="44" style="color:#FC6255"/>
+  <text x="1300" y="438" class="serif h">Precedent memory</text>
+  <text x="1300" y="458" class="serif s">each human choice is stored;</text>
+  <text x="1300" y="476" class="serif s">similar cases then resolve</text>
+  <text x="1300" y="494" class="serif s">without asking again</text>
+
+  <use href="#i-shield" x="1240" y="532" width="44" height="44" style="color:#FC6255"/>
+  <text x="1300" y="550" class="serif h">Escalates only when it should</text>
+  <text x="1300" y="570" class="serif s">wrong item · identity unverified</text>
+  <text x="1300" y="588" class="serif s">≥ $300 claim photos can't verify</text>
+  <text x="1300" y="606" class="serif s">close call between two actions</text>
+
+  <use href="#i-pause" x="1242" y="628" width="40" height="40" style="color:#FC6255"/>
+  <text x="1300" y="646" class="serif h" font-size="15">Durable pause</text>
+  <text x="1300" y="665" class="serif s">can wait hours, survives restarts</text>
+
+  <!-- ===================== RAWTREE ===================== -->
+  <rect x="40" y="740" width="1520" height="220" rx="18" fill="#83C167" fill-opacity="0.05" stroke="#83C167" stroke-width="1.6"/>
+  <text x="124" y="766" class="mono zone" fill="#83C167">RAWTREE · SYSTEM OF RECORD + AGENT MEMORY</text>
+  <text x="800" y="986" text-anchor="middle" class="mono edge" fill="#83C167">RawTree is append-only (read-only SQL) · every table is prefixed reclaim_ · current state comes from argMax projections</text>
+
+  <!-- groups -->
+  <g fill="none" stroke="#83C167" stroke-opacity="0.45" stroke-width="1">
+    <rect x="60" y="784" width="410" height="156" rx="12"/>
+    <rect x="500" y="784" width="590" height="156" rx="12"/>
+    <rect x="1120" y="784" width="180" height="156" rx="12"/>
+    <rect x="1330" y="784" width="210" height="156" rx="12"/>
+  </g>
+  <text x="76" y="806" class="mono zone" fill="#83C167" font-size="10.5">WAREHOUSE RECORD</text>
+  <text x="516" y="806" class="mono zone" fill="#83C167" font-size="10.5">AGENT MEMORY</text>
+  <text x="1136" y="806" class="mono zone" fill="#83C167" font-size="10.5">WORLD STATE</text>
+  <text x="1346" y="806" class="mono zone" fill="#83C167" font-size="10.5">TELEMETRY · EVAL</text>
+
+  <!-- warehouse record tables -->
+  <use href="#i-db" x="84" y="822" width="36" height="36" style="color:#83C167"/>
+  <text x="128" y="838" class="mono tbl">returns</text><text x="128" y="854" class="mono tbls">the trigger</text>
+  <use href="#i-db" x="84" y="876" width="36" height="36" style="color:#83C167"/>
+  <text x="128" y="892" class="mono tbl">orders</text><text x="128" y="908" class="mono tbls">price paid · date</text>
+  <use href="#i-db" x="272" y="822" width="36" height="36" style="color:#83C167"/>
+  <text x="316" y="838" class="mono tbl">products</text><text x="316" y="854" class="mono tbls">8,693 real listings</text>
+  <use href="#i-db" x="272" y="876" width="36" height="36" style="color:#83C167"/>
+  <text x="316" y="892" class="mono tbl">vendors · cost_model</text><text x="316" y="908" class="mono tbls">RTV terms · repair costs</text>
+
+  <!-- agent memory tables -->
+  <use href="#i-db" x="522" y="822" width="36" height="36" style="color:#83C167"/>
+  <text x="566" y="838" class="mono tbl">mem_events</text><text x="566" y="854" class="mono tbls">episodic ledger · every step</text>
+  <use href="#i-db" x="522" y="876" width="36" height="36" style="color:#83C167"/>
+  <text x="566" y="892" class="mono tbl">mem_knowledge</text><text x="566" y="908" class="mono tbls">price facts · 6 h TTL</text>
+  <use href="#i-db" x="810" y="822" width="36" height="36" style="color:#83C167"/>
+  <text x="854" y="838" class="mono tbl">mem_decisions</text><text x="854" y="854" class="mono tbls">human rows = precedent</text>
+  <use href="#i-db" x="810" y="876" width="36" height="36" style="color:#83C167"/>
+  <text x="854" y="892" class="mono tbl">mem_evidence</text><text x="854" y="908" class="mono tbls">web sources behind prices</text>
+
+  <!-- world state -->
+  <use href="#i-db" x="1140" y="822" width="36" height="36" style="color:#83C167"/>
+  <text x="1184" y="838" class="mono tbl">inventory</text><text x="1184" y="854" class="mono tbls">unit movements</text>
+  <text x="1140" y="892" class="mono tbls">shelf · refurb bench</text>
+  <text x="1140" y="908" class="mono tbls">RTV staging · cage</text>
+  <text x="1140" y="924" class="mono tbls">quarantine</text>
+
+  <!-- telemetry -->
+  <use href="#i-db" x="1350" y="822" width="36" height="36" style="color:#83C167"/>
+  <text x="1394" y="838" class="mono tbl">llm_calls</text><text x="1394" y="854" class="mono tbls">latency · brief size</text>
+  <use href="#i-db" x="1350" y="876" width="36" height="36" style="color:#83C167"/>
+  <text x="1394" y="892" class="mono tbl">eval_gt · dataset</text><text x="1394" y="908" class="mono tbls">hidden from agents</text>
+
+  <!-- ===================== CONNECTIONS TO RAWTREE ===================== -->
+  <line x1="96" y1="702" x2="96" y2="782" stroke="#F0AC5F" stroke-width="1.8" marker-end="url(#aGold)"/>
+  <text x="104" y="727" class="mono edge">new row</text>
+  <path d="M250 740 C250 712 520 662 666 650" fill="none" stroke="#58C4DD" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#aBlue)"/>
+  <text x="302" y="735" class="mono edge">poll · proactive trigger</text>
+
+  <line x1="720" y1="706" x2="720" y2="780" stroke="#83C167" stroke-width="2.4" marker-start="url(#aGreen)" marker-end="url(#aGreen)"/>
+  <text x="730" y="717" class="mono edge">reads a ~150-token brief</text>
+  <text x="730" y="732" class="mono edge" fill="#83C167">writes every step</text>
+
+  <line x1="1036" y1="646" x2="1196" y2="780" stroke="#83C167" stroke-width="1.8" marker-end="url(#aGreen)"/>
+  <text x="946" y="682" class="mono edge">execute + verify →</text>
+
+  <line x1="1440" y1="782" x2="1440" y2="706" stroke="#83C167" stroke-width="1.6" marker-end="url(#aGreen)"/>
+  <text x="1448" y="728" class="mono edge">SQL projections</text>
+</svg>
