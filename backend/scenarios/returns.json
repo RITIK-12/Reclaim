@@ -21,6 +21,136 @@
  },
  "returns": [
   {
+   "key": "DS097",
+   "set": "demo",
+   "stage": "shift",
+   "sku": "B0BRQVVZRY",
+   "customer_id": "C-DS097",
+   "days_since_purchase": 30,
+   "reason_text": "The box arrived crushed but the item inside is fine.",
+   "reason_category": "packaging_damage",
+   "photo": {
+    "source": "flux",
+    "effect": "none"
+   },
+   "photos": [
+    "ds_DS097.jpg",
+    "ds_DS097_2.jpg"
+   ],
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RESTOCK",
+    "escalate": false,
+    "fraud": false,
+    "why": "max EV among allowed"
+   }
+  },
+  {
+   "key": "DS053",
+   "set": "demo",
+   "stage": "shift",
+   "sku": "B0BWK6B2T4",
+   "customer_id": "C-DS053",
+   "days_since_purchase": 12,
+   "reason_text": "Left side has no sound.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "flux",
+    "effect": "none"
+   },
+   "photos": [
+    "ds_DS053.jpg",
+    "ds_DS053_2.jpg"
+   ],
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RETURN_TO_VENDOR",
+    "escalate": false,
+    "fraud": false,
+    "why": "max EV among allowed"
+   }
+  },
+  {
+   "key": "DS069",
+   "set": "demo",
+   "stage": "shift",
+   "sku": "B0CFDZ8QPS",
+   "customer_id": "C-DS069",
+   "days_since_purchase": 41,
+   "reason_text": "Fell down the stairs and broke apart.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "flux",
+    "effect": "none"
+   },
+   "photos": [
+    "ds_DS069.jpg",
+    "ds_DS069_2.jpg"
+   ],
+   "gt": {
+    "identity": "match",
+    "grade": "D",
+    "action": "LIQUIDATE",
+    "escalate": false,
+    "fraud": false,
+    "why": "max EV among allowed"
+   }
+  },
+  {
+   "key": "DS025",
+   "set": "demo",
+   "stage": "shift",
+   "sku": "B0C7L6YG34",
+   "customer_id": "C-DS025",
+   "days_since_purchase": 39,
+   "reason_text": "The display cracked in my backpack, laptop still boots.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "flux",
+    "effect": "none"
+   },
+   "photos": [
+    "ds_DS025.jpg",
+    "ds_DS025_2.jpg"
+   ],
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "REFURBISH",
+    "escalate": false,
+    "fraud": false,
+    "why": "max EV among allowed"
+   }
+  },
+  {
+   "key": "DS001",
+   "set": "demo",
+   "stage": "shift",
+   "sku": "B0BZ9N1QQC",
+   "customer_id": "C-DS001",
+   "days_since_purchase": 12,
+   "reason_text": "Phone won't turn on.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "flux",
+    "effect": "none"
+   },
+   "photos": [
+    "ds_DS001.jpg",
+    "ds_DS001_2.jpg"
+   ],
+   "gt": {
+    "identity": "mismatch",
+    "grade": "-",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "R1 identity_mismatch"
+   }
+  },
+  {
    "key": "D1",
    "set": "demo",
    "sku": "B0BTN2FS82",
@@ -40,7 +170,7 @@
     "fraud": false,
     "why": "Cracked screen on a repairable phone; screen repair is well below refurbished resale."
    },
-   "stage": "warmup"
+   "stage": "classic"
   },
   {
    "key": "D2",
@@ -62,7 +192,7 @@
     "fraud": false,
     "why": "Functional defect, Bose RTV terms (90% credit, 90 days), inside the window, earbuds are not repairable."
    },
-   "stage": "warmup"
+   "stage": "classic"
   },
   {
    "key": "D3",
@@ -84,7 +214,7 @@
     "fraud": false,
     "why": "A $19 damaged cable: no vendor terms, not repairable, handling costs more than it recovers."
    },
-   "stage": "warmup"
+   "stage": "classic"
   },
   {
    "key": "D4",
@@ -106,7 +236,7 @@
     "fraud": false,
     "why": "Packaging-only damage on an intact item: sell as open box."
    },
-   "stage": "warmup"
+   "stage": "classic"
   },
   {
    "key": "D5",
@@ -128,7 +258,7 @@
     "fraud": true,
     "why": "An apple came back instead of an iPhone 14."
    },
-   "stage": "live"
+   "stage": "classic"
   },
   {
    "key": "D6",

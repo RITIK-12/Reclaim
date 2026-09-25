@@ -53,7 +53,7 @@ class DockReplay:
         rid = f"RMA-{s['key']}"
         self.store.add_returns([{"run_id": run_id, "return_id": rid, "order_id": f"ORD-{s['key']}",
                                  "sku": s["sku"], "customer_id": s["customer_id"], "reason_text": s["reason_text"],
-                                 "reason_category": s["reason_category"], "photos": self.book.photo_names(s["key"]),
+                                 "reason_category": s["reason_category"], "photos": self.book.photos_for(s),
                                  "received_at_ms": now_ms(), "scenario_key": s["key"]}])
         return rid
 

@@ -31,8 +31,8 @@ export default function Header({ kpis, runId, current }: { kpis: Kpis | null; ru
         <div className="flex items-center gap-3 font-mono text-[11px] text-muted">
           <span>{runId ? `run ${runId}` : "no active run"}</span>
           {current && <span className="flex items-center gap-1.5 text-live"><span className="pulse-dot h-1.5 w-1.5 rounded-full bg-live" />agent working on {current}</span>}
-          <button disabled={busy} onClick={() => start("warmup", true, 3)} className="rounded border border-line px-3 py-1.5 text-[11px] font-semibold tracking-wider hover:bg-stone-100 disabled:opacity-50">NEW SHIFT</button>
-          <button disabled={busy || !runId} onClick={() => start("live", false, 8)} className="rounded bg-ink px-3 py-1.5 text-[11px] font-semibold tracking-wider text-paper hover:bg-stone-700 disabled:opacity-50">TRUCK ARRIVES ▸</button>
+          <button disabled={busy} onClick={() => start("shift", true, 6)} className="rounded border border-line px-3 py-1.5 text-[11px] font-semibold tracking-wider hover:bg-stone-100 disabled:opacity-50">NEW SHIFT</button>
+          <button disabled={busy || !runId} onClick={() => start("live", false, 6)} className="rounded bg-ink px-3 py-1.5 text-[11px] font-semibold tracking-wider text-paper hover:bg-stone-700 disabled:opacity-50">TRUCK ARRIVES ▸</button>
           <button disabled={busy} onClick={() => start("eval", true, 2)} className="rounded border border-line px-3 py-1.5 text-[11px] font-semibold tracking-wider hover:bg-stone-100 disabled:opacity-50">RUN EVAL SET</button>
         </div>
       </div>

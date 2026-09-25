@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CaseDetail, CaseRow, Kpis } from "./api";
 import { usePoll } from "./api";
 import CaseView from "./components/CaseView";
@@ -14,16 +14,19 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const detail = usePoll<CaseDetail>(selected ? `/api/cases/${selected}?run=${runId}` : null, 1200);
 
-  // Follow the agent (the case it is working on, else one waiting for a human) until the user picks a case.
+  // Follow the agent: move only when it starts a new case or a case starts waiting for a human.
+  // Never re-select on a plain poll, or the page jumps every time a new return arrives.
   const [pinned, setPinned] = useState(false);
   const current = state?.current_case ?? null;
+  const waiting = cases.find((c) => c.status === "ESCALATED")?.case_id ?? null;
+  const target = current ?? waiting;
+  const lastTarget = useRef<string | null>(null);
   useEffect(() => {
-    if (pinned || !cases.length) return;
-    const working = cases.find((c) => c.case_id === current);
-    const waiting = cases.find((c) => c.status === "ESCALATED");
-    setSelected((working ?? waiting ?? cases[0]).case_id);
-  }, [cases, pinned, current]);
-  useEffect(() => { setPinned(false); setSelected(null); }, [runId]);
+    if (pinned) return;
+    if (target && target !== lastTarget.current) { lastTarget.current = target; setSelected(target); }
+    else if (!selected && cases.length) setSelected(cases[0].case_id);
+  }, [target, pinned, cases.length, selected]);
+  useEffect(() => { setPinned(false); setSelected(null); lastTarget.current = null; }, [runId]);
 
   const open = (id: string) => { setPinned(true); setSelected(id); };
   const escalations = cases.filter((c) => c.status === "ESCALATED");

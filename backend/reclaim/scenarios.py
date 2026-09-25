@@ -22,12 +22,16 @@ class ScenarioBook:
         return json.loads(settings.scenarios_file.read_text())
 
     def returns(self, which: str = "all") -> list[dict]:
-        """which: all | demo | eval | warmup | live (demo stages)."""
+        """which: all | demo | eval | or a demo stage: shift | live | classic."""
         return [r for r in self.spec["returns"] if which in ("all", r["set"], r.get("stage"))]
 
     @staticmethod
     def photo_names(key: str) -> list[str]:
         return [f"dock_{key}_{i}.jpg" for i in range(1, PHOTOS_PER_RETURN + 1)]
+
+    def photos_for(self, s: dict) -> list[str]:
+        """FLUX dataset returns carry their own photo files; the rest use generated dock photos."""
+        return s.get("photos") or self.photo_names(s["key"])
 
     def prepare_images(self, which: str = "all") -> list[str]:
         """Download catalog/external images and build dock photos. Returns the file names made."""
@@ -43,6 +47,8 @@ class ScenarioBook:
         made = []
         for r in items:
             src = r["photo"]["source"]
+            if r.get("photos"):  # FLUX photos already on disk (scripts/build_dataset.py)
+                continue
             if src == "catalog":
                 path = self.images.path(f"cat_{r['sku']}.jpg")
             elif src.startswith("sku:"):

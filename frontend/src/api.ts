@@ -41,22 +41,22 @@ export async function postJSON<T>(path: string, body: unknown): Promise<T> {
   return r.json();
 }
 
-/** Poll an endpoint every `ms`; returns the latest data (null until the first success). */
+/** Poll an endpoint every `ms`. Returns data only for the current path (null while a new path loads). */
 export function usePoll<T>(path: string | null, ms = 1200): T | null {
-  const [data, setData] = useState<T | null>(null);
+  const [state, setState] = useState<{ path: string | null; data: T | null }>({ path: null, data: null });
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
-    if (!path) { setData(null); return; }
+    if (!path) return;
     let timer: number;
     const tick = async () => {
-      try { const d = await getJSON<T>(path); if (alive.current) setData(d); } catch { /* keep last */ }
+      try { const d = await getJSON<T>(path); if (alive.current) setState({ path, data: d }); } catch { /* keep last */ }
       if (alive.current) timer = window.setTimeout(tick, ms);
     };
     tick();
     return () => { alive.current = false; window.clearTimeout(timer); };
   }, [path, ms]);
-  return data;
+  return state.path === path ? state.data : null;
 }
 
 export const img = (name?: string | null) => (name ? `/api/images/${name}` : "");

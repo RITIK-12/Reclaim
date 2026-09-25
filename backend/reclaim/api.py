@@ -39,7 +39,7 @@ class Decision(BaseModel):
 
 
 class DemoStart(BaseModel):
-    which: str = "demo"      # demo | warmup | live | eval | all
+    which: str = "shift"     # shift (5 FLUX returns, one per action) | live (precedent pair) | demo | eval | all
     gap_s: float = 12.0
     new_run: bool = True
 
@@ -129,8 +129,8 @@ def get_state():
 
 @app.post("/api/demo/start")
 def demo_start(body: DemoStart):
-    if body.which not in ("demo", "warmup", "live", "eval", "all"):
-        raise HTTPException(400, "which must be demo, warmup, live, eval or all")
+    if body.which not in ("shift", "live", "classic", "demo", "eval", "all"):
+        raise HTTPException(400, "which must be shift, live, classic, demo, eval or all")
     return {"run_id": state.start_demo(body.which, body.gap_s, body.new_run)}
 
 
