@@ -89,7 +89,8 @@ function Eval({ runId }: { runId: string }) {
       {row("fraud catch rate", m.fraud_catch_rate === null ? "—" : `${m.fraud_catch_rate}%`)}
       {row("unsafe auto-resolves", m.unsafe_auto_resolves, m.unsafe_auto_resolves === 0)}
       {row("false escalations", m.false_escalations)}
-      {row("grade accuracy (matches)", `${m.grade_accuracy ?? "—"}%`)}
+      {row("condition grade exact / ±1", `${m.grade_accuracy ?? "—"}% / ${m.grade_within_one ?? "—"}%`)}
+      {row("extra recovered vs liquidate-all", `$${Math.round(m.uplift_vs_liquidate_usd ?? 0)}`)}
       {row("avg secs to decision", m.avg_secs_to_decision)}
     </Card>
   );

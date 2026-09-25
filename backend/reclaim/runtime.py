@@ -66,7 +66,7 @@ class Runner:
                     if decision:
                         self.supervisor.graph.invoke(Command(resume=decision), cfg)
             except Exception:  # noqa: BLE001
-                print(f"[runner] {case_id} crashed:\n{traceback.format_exc()}")
+                print(f"[runner] {case_id} crashed:\n{traceback.format_exc()}", flush=True)
             finally:
                 self.current = None
                 self.jobs.task_done()
@@ -106,5 +106,5 @@ class Watcher:
             try:
                 self.poll_once()
             except Exception as e:  # noqa: BLE001
-                print(f"[watcher] poll failed: {e}")
+                print(f"[watcher] poll failed: {e}", flush=True)
             time.sleep(self.interval)

@@ -85,7 +85,7 @@ class RawTree:
             try:
                 self.insert(table, rows)
             except Exception as e:  # noqa: BLE001 - never kill the writer thread
-                print(f"[rawtree] async insert into {table} failed: {e}")
+                print(f"[rawtree] async insert into {table} failed: {e}", flush=True)
             finally:
                 self._queue.task_done()
 

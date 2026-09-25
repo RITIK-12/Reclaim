@@ -12,6 +12,7 @@ If identity is still uncertain and another photo exists, it re-inspects with the
 from __future__ import annotations
 
 import re
+from difflib import SequenceMatcher
 from typing import Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -95,7 +96,8 @@ class Inspector(SubAgent):
         g.add_edge("observe", "profile")
         g.add_edge("profile", "verify")
         g.add_edge("verify", "guard")
-        g.add_conditional_edges("guard", lambda s: "next_photo" if s["retry"] else END)
+        g.add_conditional_edges("guard", lambda s: "next_photo" if s["retry"] else END,
+                                {"next_photo": "next_photo", END: END})
         g.add_edge("next_photo", "observe")
         return g
 
@@ -167,7 +169,7 @@ class Inspector(SubAgent):
     @staticmethod
     def _sanity(obs: dict) -> dict:
         """Clean up small-model quirks: 'none' listed as damage, a crack graded as B, a wrong enum value."""
-        obs["visible_damage"] = [d for d in obs["visible_damage"] if d.strip() and not NO_DAMAGE.match(d.strip())]
+        obs["visible_damage"] = [d for d in obs["visible_damage"] if len(d.strip()) > 2 and not NO_DAMAGE.match(d.strip())]
         seen = " ".join(obs["visible_damage"]).lower()
         if re.search(r"crack|shatter|broken|smash", seen) and obs["condition_grade"] in ("A", "B"):
             obs["condition_grade"] = "C"
@@ -183,11 +185,14 @@ class Inspector(SubAgent):
 
     @staticmethod
     def brand_seen(dock: dict, product: dict) -> bool:
-        """Did the blind pass read the product's brand (or a distinctive title word) on the item?"""
-        text = dock.get("visible_text", "").lower()
-        words = {w for w in [product.get("brand", "").lower(), *product["title"].lower().split()[:4]]
+        """Did the blind pass read the product's brand (or a distinctive title word) on the item?
+        OCR-tolerant: blurry dock photos turn AINOPE into ANKO, so near-matches of 4+ letters count."""
+        tokens = [t for t in re.findall(r"[a-z0-9]+", dock.get("visible_text", "").lower()) if len(t) >= 3]
+        words = {w for w in re.findall(r"[a-z0-9]+", " ".join([product.get("brand", ""),
+                                                               *product["title"].split()[:4]]).lower())
                  if len(w) >= 3 and w not in {"the", "for", "with", "and", "new", "generic", "2023"}}
-        return bool(text) and any(w in text for w in words)
+        return any(t in w or w in t or (min(len(t), len(w)) >= 4 and SequenceMatcher(None, t, w).ratio() >= 0.6)
+                   for t in tokens for w in words)
 
     @staticmethod
     def same_text(dock: dict, catalog: dict) -> bool:

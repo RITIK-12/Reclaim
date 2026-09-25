@@ -12,9 +12,10 @@ class Evaluator:
 
     def rows(self, run_id: str) -> list[dict]:
         run = sql_str(run_id)
-        gt = {r["return_id"]: r for r in self.db.query(f"SELECT * FROM {{t:eval_gt}} WHERE run_id = {run}")}
+        gt = {r["return_id"]: r for r in self.db.query(  # newest label per return wins (corrections are appended)
+            f"SELECT * FROM {{t:eval_gt}} WHERE run_id = {run} ORDER BY toInt64(seeded_at_ms)")}
         events = self.db.query(f"SELECT toString(case_id) AS cid, toString(type) AS type, toString(payload) AS payload, "
-                               f"toInt64(ts_ms) AS ts FROM {{t:mem_events}} WHERE run_id = {run} AND type IN "
+                               f"toInt64(ts_ms) AS ts FROM {{t:mem_events}} WHERE run_id = {run} AND toString(type) IN "
                                f"('case.opened', 'inspector.completed', 'decision.made', 'case.escalated', "
                                f"'case.closed', 'case.failed') ORDER BY ts")
         cases: dict[str, dict] = {}
@@ -51,6 +52,7 @@ class Evaluator:
         mism = [r for r in done if r["gt_identity"] == "mismatch"]
         should_esc = [r for r in done if r["gt_escalate"]]
         auto = [r for r in done if not r["gt_escalate"]]
+        matches = [r for r in done if r["gt_identity"] == "match" and r.get("identity") == "match"]
         pct = lambda a, b: round(100 * a / b, 1) if b else None  # noqa: E731
         secs = [r["secs"] for r in done if r.get("secs")]
         return {
@@ -60,8 +62,9 @@ class Evaluator:
             "fraud_catch_rate": pct(sum(r["agent"] == "ESCALATE" for r in mism), len(mism)),
             "unsafe_auto_resolves": sum(r["agent"] != "ESCALATE" for r in should_esc),
             "false_escalations": sum(r["agent"] == "ESCALATE" for r in auto),
-            "grade_accuracy": pct(sum(r.get("grade") == r["gt_grade"] for r in done if r["gt_identity"] == "match"),
-                                  len([r for r in done if r["gt_identity"] == "match"])),
+            "grade_accuracy": pct(sum(r.get("grade") == r["gt_grade"] for r in matches), len(matches)),
+            "grade_within_one": pct(sum(abs(ord(r.get("grade") or "Z") - ord(r["gt_grade"])) <= 1 for r in matches),
+                                    len(matches)),
             "uplift_vs_liquidate_usd": round(sum(r.get("uplift") or 0 for r in done), 2),
             "avg_secs_to_decision": round(sum(secs) / len(secs), 1) if secs else None,
         }

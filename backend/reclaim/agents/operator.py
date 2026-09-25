@@ -39,7 +39,7 @@ class Operator(SubAgent):
         g.add_node("verify", self.verify)
         g.add_edge(START, "execute")
         g.add_edge("execute", "verify")
-        g.add_conditional_edges("verify", lambda s: END if s.get("result") else "execute")
+        g.add_conditional_edges("verify", lambda s: END if s.get("result") else "execute", {"execute": "execute", END: END})
         return g
 
     def run(self, case: dict, action: str = "LIQUIDATE", detail: dict | None = None, **inputs) -> dict:

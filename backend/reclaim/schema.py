@@ -29,11 +29,11 @@ SCHEMAS: dict[str, dict] = {
                      "kind": "", "fetched_at_ms": 0, "accepted": False, "rejected_because": ""},
     "llm_calls": {"case_id": "", "agent": "", "node": "", "latency_ms": 0, "prompt_tokens": 0,
                   "completion_tokens": 0, "brief_tokens": 0, "ts_ms": 0},
-    "eval_gt": {"return_id": "", "key": "", "set": "", "gt_identity": "", "gt_grade": "", "gt_action": "",
+    "eval_gt": {"return_id": "", "key": "", "set": "", "seeded_at_ms": 0, "gt_identity": "", "gt_grade": "", "gt_action": "",
                 "gt_escalate": False, "gt_fraud": False, "gt_why": ""},
     "eval_runs": {"ts_ms": 0, "cases": 0, "completed": 0, "action_accuracy": 0.0, "identity_accuracy": 0.0,
                   "fraud_catch_rate": 0.0, "unsafe_auto_resolves": 0, "false_escalations": 0,
-                  "grade_accuracy": 0.0, "uplift_vs_liquidate_usd": 0.0, "avg_secs_to_decision": 0.0},
+                  "grade_accuracy": 0.0, "grade_within_one": 0.0, "uplift_vs_liquidate_usd": 0.0, "avg_secs_to_decision": 0.0},
 }
 
 

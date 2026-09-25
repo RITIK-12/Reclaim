@@ -57,7 +57,7 @@ class MarketAnalyst(SubAgent):
         g.add_node("search", self.search)
         g.add_node("extract", self.extract)
         g.add_edge(START, "recall")
-        g.add_conditional_edges("recall", lambda s: END if s.get("result") else "search")
+        g.add_conditional_edges("recall", lambda s: END if s.get("result") else "search", {"search": "search", END: END})
         g.add_edge("search", "extract")
         g.add_edge("extract", END)
         return g

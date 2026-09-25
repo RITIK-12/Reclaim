@@ -6,7 +6,8 @@
   "Functional defect claim, new item from a vendor with RTV terms, inside the window, price < $300 -> RETURN_TO_VENDOR.",
   "Functional claim on an item >= $300 that the photos cannot verify -> ESCALATE for a human bench check, unless a human precedent covers the same situation.",
   "Visible damage on a repairable device where repair is well below resale value -> REFURBISH.",
-  "Otherwise (low value, not repairable, repair costs more than it recovers) -> LIQUIDATE."
+  "Otherwise (low value, not repairable, repair costs more than it recovers) -> LIQUIDATE.",
+  "Ground-truth grade = visible condition in the dock photo: intact photo -> A, crack or scratch overlay -> C (grade is not scored for mismatched items)."
  ],
  "external_images": {
   "apple": {
@@ -55,7 +56,7 @@
    },
    "gt": {
     "identity": "match",
-    "grade": "B",
+    "grade": "A",
     "action": "RETURN_TO_VENDOR",
     "escalate": false,
     "fraud": false,
@@ -77,7 +78,7 @@
    },
    "gt": {
     "identity": "match",
-    "grade": "D",
+    "grade": "C",
     "action": "LIQUIDATE",
     "escalate": false,
     "fraud": false,
@@ -143,7 +144,7 @@
    },
    "gt": {
     "identity": "match",
-    "grade": "B",
+    "grade": "A",
     "action": "ESCALATE",
     "escalate": true,
     "fraud": false,
@@ -165,7 +166,7 @@
    },
    "gt": {
     "identity": "match",
-    "grade": "B",
+    "grade": "A",
     "action": "RETURN_TO_VENDOR",
     "escalate": false,
     "fraud": false,
@@ -272,7 +273,7 @@
    },
    "gt": {
     "identity": "match",
-    "grade": "B",
+    "grade": "A",
     "action": "RETURN_TO_VENDOR",
     "escalate": false,
     "fraud": false,

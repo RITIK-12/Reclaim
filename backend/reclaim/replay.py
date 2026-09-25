@@ -35,11 +35,19 @@ class DockReplay:
             orders.append({"run_id": run_id, "order_id": f"ORD-{s['key']}", "sku": s["sku"],
                            "customer_id": s["customer_id"], "purchased_at_ms": now - s["days_since_purchase"] * DAY_MS,
                            "price_paid": round(float(products[s["sku"]]["list_price"]) * (1 - rng.uniform(0, 0.08)), 2)})
-            truth.append({"run_id": run_id, "return_id": f"RMA-{s['key']}", "key": s["key"], "set": s["set"],
-                          **{f"gt_{k}": v for k, v in s["gt"].items()}})
+            truth.append(self.truth_row(run_id, s, now))
         self.store.add_orders(orders)
         db.insert("eval_gt", truth)
         return scenarios
+
+    @staticmethod
+    def truth_row(run_id: str, s: dict, ts: int) -> dict:
+        return {"run_id": run_id, "return_id": f"RMA-{s['key']}", "key": s["key"], "set": s["set"],
+                "seeded_at_ms": ts, **{f"gt_{k}": v for k, v in s["gt"].items()}}
+
+    def relabel(self, run_id: str) -> int:
+        """Append corrected ground truth for a run (the evaluator uses the newest row per return)."""
+        return db.insert("eval_gt", [self.truth_row(run_id, s, now_ms()) for s in self.book.returns("all")])
 
     def arrive(self, run_id: str, s: dict) -> str:
         rid = f"RMA-{s['key']}"

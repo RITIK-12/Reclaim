@@ -5,6 +5,7 @@ is legal the Liquid model chooses, with a stated reason. Every step lands in the
 """
 from __future__ import annotations
 
+import time
 import traceback
 from typing import Literal, TypedDict
 
@@ -144,9 +145,16 @@ class Supervisor:
     # --- nodes --------------------------------------------------------------------------------------
     def open_case(self, s: CaseState) -> dict:
         run_id, case_id = s["run_id"], s["case_id"]
-        r = self.store.return_(run_id, case_id)
-        o = self.store.order(run_id, r["order_id"])
-        p = self.store.product(r["sku"])
+        r = o = p = None
+        for delay in (0, 0.5, 1.0, 2.0, 3.0, 4.0):  # RawTree ingest delay: rows can take a moment to appear
+            time.sleep(delay)
+            r = self.store.return_(run_id, case_id)
+            o = r and self.store.order(run_id, r["order_id"])
+            p = r and self.store.product(r["sku"])
+            if r and o and p:
+                break
+        else:
+            raise RuntimeError(f"{case_id}: return/order/product rows not visible in RawTree")
         days = max(0, int((int(r["received_at_ms"]) - int(o["purchased_at_ms"])) / 86_400_000))
         keep = ("return_id", "order_id", "sku", "customer_id", "reason_text", "reason_category", "photos",
                 "received_at_ms")

@@ -210,8 +210,8 @@ def kpis():
     llm = db.one(f"SELECT count() AS calls, avg(toFloat64(latency_ms)) AS avg_ms, "
                  f"avgIf(toFloat64(brief_tokens), toFloat64(brief_tokens) > 0) AS avg_brief, "
                  f"sum(toInt64(prompt_tokens)) AS prompt_tokens FROM {{t:llm_calls}} WHERE run_id = {sql_str(run)}") or {}
-    counts = db.one(f"SELECT count() AS events, countIf(type = 'market.cache_hit') AS cache_hits, "
-                    f"countIf(type = 'market.search') AS searches FROM {{t:mem_events}} "
+    counts = db.one(f"SELECT count() AS events, countIf(toString(type) = 'market.cache_hit') AS cache_hits, "
+                    f"countIf(toString(type) = 'market.search') AS searches FROM {{t:mem_events}} "
                     f"WHERE run_id = {sql_str(run)}") or {}
     hs = heads(run)
     secs = [(h["last_ts"] - h["first_ts"]) / 1000 for cid, h in hs.items()

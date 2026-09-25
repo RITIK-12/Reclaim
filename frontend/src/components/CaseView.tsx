@@ -68,9 +68,11 @@ function Inspection({ i }: { i: any }) {
   );
 }
 
-function Market({ m, evidence }: { m: any; evidence: any[] }) {
+function Market({ m, evidence, inspection }: { m: any; evidence: any[]; inspection: any }) {
   const tag = <SponsorTag color="bg-blue-50 text-blue-800">Nimble · live web</SponsorTag>;
-  if (!m) return <Card title="Market analyst" tag={tag}><Pending text="Waiting for inspection…" /></Card>;
+  if (!m && inspection?.identity === "mismatch")
+    return <Card title="Market analyst" tag={tag}><div className="py-3 text-sm text-muted">Skipped: the item is not what was ordered, so the Supervisor sent it straight to a human instead of spending web searches on it.</div></Card>;
+  if (!m) return <Card title="Market analyst" tag={tag}><Pending text={inspection ? "Searching the live web…" : "Waiting for inspection…"} /></Card>;
   const accepted = evidence.filter((e) => e.accepted);
   const rejected = evidence.length - accepted.length;
   return (
@@ -96,11 +98,11 @@ function Market({ m, evidence }: { m: any; evidence: any[] }) {
   );
 }
 
-function DecisionCard({ d, human, execution }: { d: any; human: any; execution: any }) {
-  if (!d && !human) return <Card title="Decision"><Pending text="Scoring options…" /></Card>;
+function DecisionCard({ d, human, execution, escalation }: { d: any; human: any; execution: any; escalation: any }) {
+  if (!d && !human && !escalation) return <Card title="Decision"><Pending text="Scoring options…" /></Card>;
   const ev: Record<string, number> = d?.ev ?? {};
   const max = Math.max(1, ...Object.values(ev).map((v) => Math.max(0, v)));
-  const final = human?.action ?? d?.action;
+  const final = human?.action ?? d?.action ?? (escalation ? "ESCALATE" : undefined);
   return (
     <Card title="Decision · expected recovery per action" tag={<div className="flex items-center gap-2">{d?.precedent_ref && <SponsorTag color="bg-violet-50 text-violet-800">human precedent {d.precedent_ref}</SponsorTag>}<ActionBadge action={final} size="lg" /></div>}>
       {d && (
@@ -118,7 +120,12 @@ function DecisionCard({ d, human, execution }: { d: any; human: any; execution: 
           })}
         </div>
       )}
-      {d?.escalation_reason && <div className="mt-3 rounded border border-orange-200 bg-orange-50 px-3 py-2 text-[12px] text-hold"><b>Escalated:</b> {d.escalation_reason}</div>}
+      {(d?.escalation_reason || escalation?.reason) && (
+        <div className="mt-3 rounded border border-orange-200 bg-orange-50 px-3 py-2 text-[12px] text-hold">
+          <b>Escalated to a human:</b> {d?.escalation_reason ?? escalation?.reason}
+          {!human && <div className="mt-1 font-mono text-[10px]">graph paused durably (LangGraph interrupt) · waiting in the inbox →</div>}
+        </div>
+      )}
       {human && <div className="mt-3 rounded border border-orange-200 bg-white px-3 py-2 text-[12px]"><b className="text-hold">Human decided {pretty(human.action)}</b>{human.fraud_flag ? " · flagged fraud" : ""}{human.note ? ` — “${human.note}”` : ""}</div>}
       {d?.rationale && <p className="mt-3 text-[13px] leading-snug">{d.rationale}</p>}
       {execution && <div className="mt-3 font-mono text-[11px] text-go">✓ executed in RawTree · unit at {execution.location} / {execution.state}</div>}
@@ -169,9 +176,9 @@ export default function CaseView({ c }: { c: CaseDetail | null }) {
       <Photos c={c} />
       <div className="grid grid-cols-2 gap-3">
         <Inspection i={c.inspection} />
-        <Market m={c.market} evidence={c.evidence ?? []} />
+        <Market m={c.market} evidence={c.evidence ?? []} inspection={c.inspection} />
       </div>
-      <DecisionCard d={c.decision} human={c.human} execution={c.execution} />
+      <DecisionCard d={c.decision} human={c.human} execution={c.execution} escalation={c.escalation} />
       <Timeline items={c.timeline} />
     </div>
   );
