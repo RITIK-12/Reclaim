@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Status =
   | "QUEUED" | "RECEIVED" | "INSPECTING" | "PRICING" | "DECIDING"
@@ -41,20 +41,23 @@ export async function postJSON<T>(path: string, body: unknown): Promise<T> {
   return r.json();
 }
 
-/** Poll an endpoint every `ms`. Returns data only for the current path (null while a new path loads). */
+/** Poll an endpoint every `ms`. Returns data only for the current path (null while a new path loads).
+ *  Each effect run owns its own `active` flag, so a poller for an old path can never reschedule itself. */
 export function usePoll<T>(path: string | null, ms = 1200): T | null {
   const [state, setState] = useState<{ path: string | null; data: T | null }>({ path: null, data: null });
-  const alive = useRef(true);
   useEffect(() => {
-    alive.current = true;
     if (!path) return;
-    let timer: number;
+    let active = true;
+    let timer: number | undefined;
     const tick = async () => {
-      try { const d = await getJSON<T>(path); if (alive.current) setState({ path, data: d }); } catch { /* keep last */ }
-      if (alive.current) timer = window.setTimeout(tick, ms);
+      try {
+        const d = await getJSON<T>(path);
+        if (active) setState({ path, data: d });
+      } catch { /* keep the last good data */ }
+      if (active) timer = window.setTimeout(tick, ms);
     };
     tick();
-    return () => { alive.current = false; window.clearTimeout(timer); };
+    return () => { active = false; window.clearTimeout(timer); };
   }, [path, ms]);
   return state.path === path ? state.data : null;
 }
