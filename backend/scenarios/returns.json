@@ -1,119 +1,507 @@
 {
-  "about": "Labelled returns for the demo and the evaluation. Products are real catalog SKUs (milistu/AMAZON-Products-2023). Orders, customers, reasons and dock photos are synthetic: dock photos are generated from the catalog image (cut-out, warehouse surface, rotation, lighting, optional crack/scratch overlay) or from a Wikimedia image. The agent never sees the `gt` block.",
-  "rubric": [
-    "Item in the photo is not the ordered product -> ESCALATE (possible return fraud).",
-    "Intact item returned for packaging damage, cosmetic reasons or change of mind -> RESTOCK as open box.",
-    "Functional defect claim, new item from a vendor with RTV terms, inside the window, price < $300 -> RETURN_TO_VENDOR.",
-    "Functional claim on an item >= $300 that the photos cannot verify -> ESCALATE for a human bench check, unless a human precedent covers the same situation.",
-    "Visible damage on a repairable device where repair is well below resale value -> REFURBISH.",
-    "Otherwise (low value, not repairable, repair costs more than it recovers) -> LIQUIDATE."
-  ],
-  "external_images": {
-    "apple": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/960px-Red_Apple.jpg",
-              "credit": "Red Apple by Abhijit Tembhekar, CC BY 2.0, via Wikimedia Commons"},
-    "brick": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Brick.jpg/960px-Brick.jpg",
-              "credit": "Brick by Andrewlister, public domain, via Wikimedia Commons"}
+ "about": "Labelled returns for the demo and the evaluation. Products are real catalog SKUs (milistu/AMAZON-Products-2023). Orders, customers, reasons and dock photos are synthetic: dock photos are generated from the catalog image (cut-out, warehouse surface, rotation, lighting, optional crack/scratch overlay) or from a Wikimedia image. The agent never sees the `gt` block.",
+ "rubric": [
+  "Item in the photo is not the ordered product -> ESCALATE (possible return fraud).",
+  "Intact item returned for packaging damage, cosmetic reasons or change of mind -> RESTOCK as open box.",
+  "Functional defect claim, new item from a vendor with RTV terms, inside the window, price < $300 -> RETURN_TO_VENDOR.",
+  "Functional claim on an item >= $300 that the photos cannot verify -> ESCALATE for a human bench check, unless a human precedent covers the same situation.",
+  "Visible damage on a repairable device where repair is well below resale value -> REFURBISH.",
+  "Otherwise (low value, not repairable, repair costs more than it recovers) -> LIQUIDATE."
+ ],
+ "external_images": {
+  "apple": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/960px-Red_Apple.jpg",
+   "credit": "Red Apple by Abhijit Tembhekar, CC BY 2.0, via Wikimedia Commons"
   },
-  "returns": [
-    {"key": "D1", "set": "demo", "sku": "B0BTN2FS82", "customer_id": "C-1001", "days_since_purchase": 9,
-     "reason_text": "Dropped it on day two. The screen is cracked but the phone still turns on.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "crack"},
-     "gt": {"identity": "match", "grade": "C", "action": "REFURBISH", "escalate": false, "fraud": false,
-            "why": "Cracked screen on a repairable phone; screen repair is well below refurbished resale."}},
-    {"key": "D2", "set": "demo", "sku": "B0BFW3RLZ7", "customer_id": "C-1002", "days_since_purchase": 12,
-     "reason_text": "The left earbud stopped charging after a week.",
-     "reason_category": "functional", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "B", "action": "RETURN_TO_VENDOR", "escalate": false, "fraud": false,
-            "why": "Functional defect, Bose RTV terms (90% credit, 90 days), inside the window, earbuds are not repairable."}},
-    {"key": "D3", "set": "demo", "sku": "B0B6J326J9", "customer_id": "C-1003", "days_since_purchase": 20,
-     "reason_text": "Cable is frayed near the connector and gets hot when charging.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "scratch"},
-     "gt": {"identity": "match", "grade": "D", "action": "LIQUIDATE", "escalate": false, "fraud": false,
-            "why": "A $19 damaged cable: no vendor terms, not repairable, handling costs more than it recovers."}},
-    {"key": "D4", "set": "demo", "sku": "B0C5ZC7FWR", "customer_id": "C-1004", "days_since_purchase": 6,
-     "reason_text": "The box arrived crushed. Headphones look fine, never used them.",
-     "reason_category": "packaging_damage", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "A", "action": "RESTOCK", "escalate": false, "fraud": false,
-            "why": "Packaging-only damage on an intact item: sell as open box."}},
-    {"key": "D5", "set": "demo", "sku": "B0BZ9N1QQC", "customer_id": "C-1005", "days_since_purchase": 15,
-     "reason_text": "Phone won't turn on.",
-     "reason_category": "functional", "photo": {"source": "ext:apple", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "D", "action": "ESCALATE", "escalate": true, "fraud": true,
-            "why": "An apple came back instead of an iPhone 14."}},
-    {"key": "D6", "set": "demo", "sku": "B0C2ZMJW53", "customer_id": "C-1006", "days_since_purchase": 18,
-     "reason_text": "Battery dies within 30 minutes and the laptop gets really hot.",
-     "reason_category": "functional", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "B", "action": "ESCALATE", "escalate": true, "fraud": false,
-            "why": "A $440 functional claim the photos cannot verify: a human decides (demo: RETURN_TO_VENDOR)."}},
-    {"key": "D7", "set": "demo", "sku": "B0C5S6V68R", "customer_id": "C-1007", "days_since_purchase": 21,
-     "reason_text": "Battery only lasts about 40 minutes, even after a full charge.",
-     "reason_category": "functional", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "B", "action": "RETURN_TO_VENDOR", "escalate": false, "fraud": false,
-            "why": "Same situation as D6 (laptop, unverifiable battery claim): follow the human precedent."}},
-
-    {"key": "E01", "set": "eval", "sku": "B0BWK3TW8T", "customer_id": "C-2001", "days_since_purchase": 8,
-     "reason_text": "Changed my mind, opened but barely used.",
-     "reason_category": "cosmetic", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "A", "action": "RESTOCK", "escalate": false, "fraud": false, "why": "Intact, change of mind."}},
-    {"key": "E02", "set": "eval", "sku": "B0C14DD4QL", "customer_id": "C-2002", "days_since_purchase": 11,
-     "reason_text": "Box was damaged in shipping, the watch itself is fine.",
-     "reason_category": "packaging_damage", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "A", "action": "RESTOCK", "escalate": false, "fraud": false, "why": "Packaging-only damage."}},
-    {"key": "E03", "set": "eval", "sku": "B0BVGCLRVM", "customer_id": "C-2003", "days_since_purchase": 5,
-     "reason_text": "Outer packaging torn, monitor works perfectly.",
-     "reason_category": "packaging_damage", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "A", "action": "RESTOCK", "escalate": false, "fraud": false, "why": "Packaging-only damage."}},
-    {"key": "E04", "set": "eval", "sku": "B0C9HZMCXQ", "customer_id": "C-2004", "days_since_purchase": 14,
-     "reason_text": "Didn't like the sound. Like new.",
-     "reason_category": "cosmetic", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "A", "action": "RESTOCK", "escalate": false, "fraud": false, "why": "Intact, change of mind."}},
-    {"key": "E05", "set": "eval", "sku": "B0BX4JR31W", "customer_id": "C-2005", "days_since_purchase": 20,
-     "reason_text": "Stopped charging after three days.",
-     "reason_category": "functional", "photo": {"source": "catalog", "effect": "none"},
-     "gt": {"identity": "match", "grade": "B", "action": "RETURN_TO_VENDOR", "escalate": false, "fraud": false, "why": "Functional defect, Xiaomi RTV terms, in window, < $300."}},
-    {"key": "E06", "set": "eval", "sku": "B0BFW3RLZ7", "customer_id": "C-2006", "days_since_purchase": 10,
-     "reason_text": "Noise cancelling doesn't work.",
-     "reason_category": "functional", "photo": {"source": "sku:B09MQ49WT9", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "B", "action": "ESCALATE", "escalate": true, "fraud": true, "why": "Cheap look-alike earbuds returned for Bose QC Earbuds II."}},
-    {"key": "E07", "set": "eval", "sku": "B0BS4D5C8D", "customer_id": "C-2007", "days_since_purchase": 16,
-     "reason_text": "Screen flickers.",
-     "reason_category": "functional", "photo": {"source": "sku:B0C6TDCFW6", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "B", "action": "ESCALATE", "escalate": true, "fraud": true, "why": "Generic $9 smartwatch returned for an Apple Watch Series 8."}},
-    {"key": "E08", "set": "eval", "sku": "B0C5ZC7FWR", "customer_id": "C-2008", "days_since_purchase": 9,
-     "reason_text": "Left side has no sound.",
-     "reason_category": "functional", "photo": {"source": "sku:B0BRSL59D8", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "B", "action": "ESCALATE", "escalate": true, "fraud": true, "why": "Generic headphones returned for Sony WH-1000XM5."}},
-    {"key": "E09", "set": "eval", "sku": "B0C7L6YG34", "customer_id": "C-2009", "days_since_purchase": 12,
-     "reason_text": "Laptop won't boot.",
-     "reason_category": "functional", "photo": {"source": "sku:B0C4637RHT", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "D", "action": "ESCALATE", "escalate": true, "fraud": true, "why": "A screen-protector pack came back instead of a gaming laptop."}},
-    {"key": "E10", "set": "eval", "sku": "B0C381Y5CW", "customer_id": "C-2010", "days_since_purchase": 7,
-     "reason_text": "Doesn't record.",
-     "reason_category": "functional", "photo": {"source": "sku:B0C9481VV3", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "D", "action": "ESCALATE", "escalate": true, "fraud": true, "why": "A TV antenna came back instead of a Garmin dash cam."}},
-    {"key": "E11", "set": "eval", "sku": "B0CDCS9VN9", "customer_id": "C-2011", "days_since_purchase": 13,
-     "reason_text": "Defective, won't power on.",
-     "reason_category": "functional", "photo": {"source": "ext:brick", "effect": "none"},
-     "gt": {"identity": "mismatch", "grade": "D", "action": "ESCALATE", "escalate": true, "fraud": true, "why": "A brick came back instead of a Dell laptop."}},
-    {"key": "E12", "set": "eval", "sku": "B0BTR8QZ51", "customer_id": "C-2012", "days_since_purchase": 17,
-     "reason_text": "Screen shattered when it fell off the table.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "crack"},
-     "gt": {"identity": "match", "grade": "C", "action": "REFURBISH", "escalate": false, "fraud": false, "why": "Cracked phone screen, repair well below resale."}},
-    {"key": "E13", "set": "eval", "sku": "B0CJ37ZSS3", "customer_id": "C-2013", "days_since_purchase": 25,
-     "reason_text": "The touchscreen cracked in my bag.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "crack"},
-     "gt": {"identity": "match", "grade": "C", "action": "REFURBISH", "escalate": false, "fraud": false, "why": "Cracked screen on a $770 laptop, repair well below resale."}},
-    {"key": "E14", "set": "eval", "sku": "B0BYPHZWZK", "customer_id": "C-2014", "days_since_purchase": 19,
-     "reason_text": "Screen cracked after a drop.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "crack"},
-     "gt": {"identity": "match", "grade": "C", "action": "LIQUIDATE", "escalate": false, "fraud": false, "why": "$138 tablet: a $65 screen repair recovers less than liquidation."}},
-    {"key": "E15", "set": "eval", "sku": "B0C7CYBP3X", "customer_id": "C-2015", "days_since_purchase": 22,
-     "reason_text": "Glass cracked.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "crack"},
-     "gt": {"identity": "match", "grade": "C", "action": "LIQUIDATE", "escalate": false, "fraud": false, "why": "$50 smartwatch: repair costs about as much as the item."}},
-    {"key": "E16", "set": "eval", "sku": "B0C94WMF72", "customer_id": "C-2016", "days_since_purchase": 30,
-     "reason_text": "Housing is scratched and cracked.",
-     "reason_category": "physical_damage", "photo": {"source": "catalog", "effect": "scratch"},
-     "gt": {"identity": "match", "grade": "C", "action": "LIQUIDATE", "escalate": false, "fraud": false, "why": "$30 camera, damaged: liquidate."}}
-  ]
+  "brick": {
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Brick.jpg/960px-Brick.jpg",
+   "credit": "Brick by Andrewlister, public domain, via Wikimedia Commons"
+  }
+ },
+ "returns": [
+  {
+   "key": "D1",
+   "set": "demo",
+   "sku": "B0BTN2FS82",
+   "customer_id": "C-1001",
+   "days_since_purchase": 9,
+   "reason_text": "Dropped it on day two. The screen is cracked but the phone still turns on.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "crack"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "REFURBISH",
+    "escalate": false,
+    "fraud": false,
+    "why": "Cracked screen on a repairable phone; screen repair is well below refurbished resale."
+   }
+  },
+  {
+   "key": "D2",
+   "set": "demo",
+   "sku": "B0BFW3RLZ7",
+   "customer_id": "C-1002",
+   "days_since_purchase": 12,
+   "reason_text": "The left earbud stopped charging after a week.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "B",
+    "action": "RETURN_TO_VENDOR",
+    "escalate": false,
+    "fraud": false,
+    "why": "Functional defect, Bose RTV terms (90% credit, 90 days), inside the window, earbuds are not repairable."
+   }
+  },
+  {
+   "key": "D3",
+   "set": "demo",
+   "sku": "B0B6J326J9",
+   "customer_id": "C-1003",
+   "days_since_purchase": 20,
+   "reason_text": "Cable is frayed near the connector and gets hot when charging.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "scratch"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "D",
+    "action": "LIQUIDATE",
+    "escalate": false,
+    "fraud": false,
+    "why": "A $19 damaged cable: no vendor terms, not repairable, handling costs more than it recovers."
+   }
+  },
+  {
+   "key": "D4",
+   "set": "demo",
+   "sku": "B0C5ZC7FWR",
+   "customer_id": "C-1004",
+   "days_since_purchase": 6,
+   "reason_text": "The box arrived crushed. Headphones look fine, never used them.",
+   "reason_category": "packaging_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RESTOCK",
+    "escalate": false,
+    "fraud": false,
+    "why": "Packaging-only damage on an intact item: sell as open box."
+   }
+  },
+  {
+   "key": "D5",
+   "set": "demo",
+   "sku": "B0BZ9N1QQC",
+   "customer_id": "C-1005",
+   "days_since_purchase": 15,
+   "reason_text": "Phone won't turn on.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "ext:apple",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "D",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "An apple came back instead of an iPhone 14."
+   }
+  },
+  {
+   "key": "D6",
+   "set": "demo",
+   "sku": "B0C2ZMJW53",
+   "customer_id": "C-1006",
+   "days_since_purchase": 18,
+   "reason_text": "Battery dies within 30 minutes and the laptop gets really hot.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "B",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": false,
+    "why": "A $440 functional claim the photos cannot verify: a human decides (demo: RETURN_TO_VENDOR)."
+   }
+  },
+  {
+   "key": "D7",
+   "set": "demo",
+   "sku": "B0C5S6V68R",
+   "customer_id": "C-1007",
+   "days_since_purchase": 21,
+   "reason_text": "Battery only lasts about 40 minutes, even after a full charge.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "B",
+    "action": "RETURN_TO_VENDOR",
+    "escalate": false,
+    "fraud": false,
+    "why": "Same situation as D6 (laptop, unverifiable battery claim): follow the human precedent."
+   },
+   "wait_for": "D6"
+  },
+  {
+   "key": "E01",
+   "set": "eval",
+   "sku": "B0BWK3TW8T",
+   "customer_id": "C-2001",
+   "days_since_purchase": 8,
+   "reason_text": "Changed my mind, opened but barely used.",
+   "reason_category": "cosmetic",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RESTOCK",
+    "escalate": false,
+    "fraud": false,
+    "why": "Intact, change of mind."
+   }
+  },
+  {
+   "key": "E02",
+   "set": "eval",
+   "sku": "B0C14DD4QL",
+   "customer_id": "C-2002",
+   "days_since_purchase": 11,
+   "reason_text": "Box was damaged in shipping, the watch itself is fine.",
+   "reason_category": "packaging_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RESTOCK",
+    "escalate": false,
+    "fraud": false,
+    "why": "Packaging-only damage."
+   }
+  },
+  {
+   "key": "E03",
+   "set": "eval",
+   "sku": "B0BVGCLRVM",
+   "customer_id": "C-2003",
+   "days_since_purchase": 5,
+   "reason_text": "Outer packaging torn, monitor works perfectly.",
+   "reason_category": "packaging_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RESTOCK",
+    "escalate": false,
+    "fraud": false,
+    "why": "Packaging-only damage."
+   }
+  },
+  {
+   "key": "E04",
+   "set": "eval",
+   "sku": "B0C9HZMCXQ",
+   "customer_id": "C-2004",
+   "days_since_purchase": 14,
+   "reason_text": "Didn't like the sound. Like new.",
+   "reason_category": "cosmetic",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "A",
+    "action": "RESTOCK",
+    "escalate": false,
+    "fraud": false,
+    "why": "Intact, change of mind."
+   }
+  },
+  {
+   "key": "E05",
+   "set": "eval",
+   "sku": "B0BX4JR31W",
+   "customer_id": "C-2005",
+   "days_since_purchase": 20,
+   "reason_text": "Stopped charging after three days.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "catalog",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "B",
+    "action": "RETURN_TO_VENDOR",
+    "escalate": false,
+    "fraud": false,
+    "why": "Functional defect, Xiaomi RTV terms, in window, < $300."
+   }
+  },
+  {
+   "key": "E06",
+   "set": "eval",
+   "sku": "B0BFW3RLZ7",
+   "customer_id": "C-2006",
+   "days_since_purchase": 10,
+   "reason_text": "Noise cancelling doesn't work.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "sku:B09MQ49WT9",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "B",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "Cheap look-alike earbuds returned for Bose QC Earbuds II."
+   }
+  },
+  {
+   "key": "E07",
+   "set": "eval",
+   "sku": "B0BS4D5C8D",
+   "customer_id": "C-2007",
+   "days_since_purchase": 16,
+   "reason_text": "Screen flickers.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "sku:B0C6TDCFW6",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "B",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "Generic $9 smartwatch returned for an Apple Watch Series 8."
+   }
+  },
+  {
+   "key": "E08",
+   "set": "eval",
+   "sku": "B0C5ZC7FWR",
+   "customer_id": "C-2008",
+   "days_since_purchase": 9,
+   "reason_text": "Left side has no sound.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "sku:B0BRSL59D8",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "B",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "Generic headphones returned for Sony WH-1000XM5."
+   }
+  },
+  {
+   "key": "E09",
+   "set": "eval",
+   "sku": "B0C7L6YG34",
+   "customer_id": "C-2009",
+   "days_since_purchase": 12,
+   "reason_text": "Laptop won't boot.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "sku:B0C4637RHT",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "D",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "A screen-protector pack came back instead of a gaming laptop."
+   }
+  },
+  {
+   "key": "E10",
+   "set": "eval",
+   "sku": "B0C381Y5CW",
+   "customer_id": "C-2010",
+   "days_since_purchase": 7,
+   "reason_text": "Doesn't record.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "sku:B0C9481VV3",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "D",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "A TV antenna came back instead of a Garmin dash cam."
+   }
+  },
+  {
+   "key": "E11",
+   "set": "eval",
+   "sku": "B0CDCS9VN9",
+   "customer_id": "C-2011",
+   "days_since_purchase": 13,
+   "reason_text": "Defective, won't power on.",
+   "reason_category": "functional",
+   "photo": {
+    "source": "ext:brick",
+    "effect": "none"
+   },
+   "gt": {
+    "identity": "mismatch",
+    "grade": "D",
+    "action": "ESCALATE",
+    "escalate": true,
+    "fraud": true,
+    "why": "A brick came back instead of a Dell laptop."
+   }
+  },
+  {
+   "key": "E12",
+   "set": "eval",
+   "sku": "B0BTR8QZ51",
+   "customer_id": "C-2012",
+   "days_since_purchase": 17,
+   "reason_text": "Screen shattered when it fell off the table.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "crack"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "REFURBISH",
+    "escalate": false,
+    "fraud": false,
+    "why": "Cracked phone screen, repair well below resale."
+   }
+  },
+  {
+   "key": "E13",
+   "set": "eval",
+   "sku": "B0CJ37ZSS3",
+   "customer_id": "C-2013",
+   "days_since_purchase": 25,
+   "reason_text": "The touchscreen cracked in my bag.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "crack"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "REFURBISH",
+    "escalate": false,
+    "fraud": false,
+    "why": "Cracked screen on a $770 laptop, repair well below resale."
+   }
+  },
+  {
+   "key": "E14",
+   "set": "eval",
+   "sku": "B0BYPHZWZK",
+   "customer_id": "C-2014",
+   "days_since_purchase": 19,
+   "reason_text": "Screen cracked after a drop.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "crack"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "LIQUIDATE",
+    "escalate": false,
+    "fraud": false,
+    "why": "$138 tablet: a $65 screen repair recovers less than liquidation."
+   }
+  },
+  {
+   "key": "E15",
+   "set": "eval",
+   "sku": "B0C7CYBP3X",
+   "customer_id": "C-2015",
+   "days_since_purchase": 22,
+   "reason_text": "Glass cracked.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "crack"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "LIQUIDATE",
+    "escalate": false,
+    "fraud": false,
+    "why": "$50 smartwatch: repair costs about as much as the item."
+   }
+  },
+  {
+   "key": "E16",
+   "set": "eval",
+   "sku": "B0C94WMF72",
+   "customer_id": "C-2016",
+   "days_since_purchase": 30,
+   "reason_text": "Housing is scratched and cracked.",
+   "reason_category": "physical_damage",
+   "photo": {
+    "source": "catalog",
+    "effect": "scratch"
+   },
+   "gt": {
+    "identity": "match",
+    "grade": "C",
+    "action": "LIQUIDATE",
+    "escalate": false,
+    "fraud": false,
+    "why": "$30 camera, damaged: liquidate."
+   }
+  }
+ ]
 }

@@ -17,7 +17,7 @@ DEVICE_CATEGORIES = {
 }
 ACCESSORY_CATEGORIES = {
     "cable_charger": "accessory", "case_protector": "accessory",
-    "computer_accessory": "accessory", "other_accessory": "accessory",
+    "computer_accessory": "computer", "other_accessory": "accessory",  # VLMs often call a laptop an accessory
 }
 FAMILY = {**DEVICE_CATEGORIES, **ACCESSORY_CATEGORIES}
 CATEGORIES = list(FAMILY)

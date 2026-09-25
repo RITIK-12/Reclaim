@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import json
+import queue
 import re
+import threading
 import time
 from typing import Any, Iterable
 
@@ -34,6 +36,9 @@ class RawTree:
         self.prefix = prefix
         self._http = httpx.Client(base_url=url, timeout=60,
                                   headers={"Authorization": f"Bearer {key}"})
+        self._queue: queue.Queue = queue.Queue()
+        self._writer: threading.Thread | None = None
+        self._lock = threading.Lock()
 
     def t(self, name: str) -> str:
         if not _SAFE_NAME.match(name):
@@ -48,8 +53,13 @@ class RawTree:
             if name.lower() not in ctes and not name.startswith(self.prefix):
                 raise PermissionError(f"RawTree scope: {name!r} is outside {self.prefix}*")
 
-    def insert(self, table: str, rows: dict | Iterable[dict], batch: int = 1000) -> int:
+    def insert(self, table: str, rows: dict | Iterable[dict], batch: int = 1000, wait: bool = True) -> int:
+        """Append rows. wait=False queues them for a background writer (ledger events, telemetry)."""
         rows = [rows] if isinstance(rows, dict) else list(rows)
+        if not wait:
+            self._start_writer()
+            self._queue.put((table, rows))
+            return 0
         inserted = 0
         for i in range(0, len(rows), batch):
             chunk = rows[i:i + batch]
@@ -58,6 +68,26 @@ class RawTree:
             r.raise_for_status()
             inserted += r.json().get("inserted", len(chunk))
         return inserted
+
+    def flush(self) -> None:
+        """Block until every queued insert has been written."""
+        self._queue.join()
+
+    def _start_writer(self) -> None:
+        with self._lock:
+            if self._writer is None:
+                self._writer = threading.Thread(target=self._drain, daemon=True, name="rawtree-writer")
+                self._writer.start()
+
+    def _drain(self) -> None:
+        while True:
+            table, rows = self._queue.get()
+            try:
+                self.insert(table, rows)
+            except Exception as e:  # noqa: BLE001 - never kill the writer thread
+                print(f"[rawtree] async insert into {table} failed: {e}")
+            finally:
+                self._queue.task_done()
 
     def query(self, sql: str) -> list[dict]:
         """Run SQL. Write `{tbl}` placeholders as `{t:name}`; they expand to prefixed names."""
