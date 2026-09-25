@@ -47,8 +47,7 @@ export function usePoll<T>(path: string | null, ms = 1200): T | null {
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
-    setData(null);
-    if (!path) return;
+    if (!path) { setData(null); return; }
     let timer: number;
     const tick = async () => {
       try { const d = await getJSON<T>(path); if (alive.current) setData(d); } catch { /* keep last */ }

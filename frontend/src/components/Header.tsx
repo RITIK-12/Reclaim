@@ -7,7 +7,7 @@ function Kpi({ label, value, sub, accent = "" }: { label: string; value: string 
     <div className="min-w-0 border-l border-line pl-4 first:border-l-0 first:pl-0">
       <div className="label truncate">{label}</div>
       <div className={`mt-0.5 font-mono text-2xl font-semibold tabular-nums ${accent}`}>{value}</div>
-      {sub && <div className="truncate font-mono text-[10px] text-muted">{sub}</div>}
+      {sub && <div className="font-mono text-[10px] leading-tight text-muted">{sub}</div>}
     </div>
   );
 }
@@ -37,14 +37,14 @@ export default function Header({ kpis, runId, current }: { kpis: Kpis | null; ru
         </div>
       </div>
       <div className="grid grid-cols-8 gap-4 px-6 py-4">
-        <Kpi label="Returns received" value={k?.received ?? 0} sub={`${k?.closed ?? 0} closed`} />
+        <Kpi label="Returns" value={k?.received ?? 0} sub={`${k?.closed ?? 0} closed`} />
         <Kpi label="Auto-resolved" value={`${k?.auto_resolved_pct ?? 0}%`} sub="no human needed" accent="text-go" />
-        <Kpi label="Awaiting human" value={k?.pending_human ?? 0} sub={`${k?.escalated ?? 0} escalated total`} accent={k?.pending_human ? "text-hold" : ""} />
-        <Kpi label="Fraud flags" value={k?.fraud_flags ?? 0} sub="wrong item returned" accent={k?.fraud_flags ? "text-fraud" : ""} />
-        <Kpi label="Extra recovered" value={usd(k?.uplift_vs_liquidate)} sub="extra $ vs liquidate-all" accent="text-go" />
-        <Kpi label="Avg time per case" value={k?.avg_case_secs ? `${k.avg_case_secs}s` : "—"} sub={`${k?.llm_calls ?? 0} Liquid calls · ${k?.avg_llm_ms ?? 0} ms avg`} />
-        <Kpi label="Web evidence" value={k?.web_searches ?? 0} sub={`Nimble searches · ${k?.cache_hits ?? 0} memory hits`} accent="text-live" />
-        <Kpi label="Context per call" value={`${k?.avg_brief_tokens ?? 0} tok`} sub={`ledger: ${k?.ledger_events ?? 0} events in RawTree`} />
+        <Kpi label="Awaiting human" value={k?.pending_human ?? 0} sub={`${k?.escalated ?? 0} escalated`} accent={k?.pending_human ? "text-hold" : ""} />
+        <Kpi label="Fraud flags" value={k?.fraud_flags ?? 0} sub="wrong item back" accent={k?.fraud_flags ? "text-fraud" : ""} />
+        <Kpi label="Extra recovered" value={usd(k?.uplift_vs_liquidate)} sub="vs liquidate-all" accent="text-go" />
+        <Kpi label="Time per case" value={k?.avg_case_secs ? `${k.avg_case_secs}s` : "—"} sub={`${k?.llm_calls ?? 0} Liquid calls`} />
+        <Kpi label="Web searches" value={k?.web_searches ?? 0} sub={`Nimble · ${k?.cache_hits ?? 0} memory hits`} accent="text-live" />
+        <Kpi label="Context / call" value={`${k?.avg_brief_tokens ?? 0} tok`} sub={`ledger ${k?.ledger_events ?? 0} events`} />
       </div>
     </header>
   );

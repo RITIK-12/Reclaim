@@ -14,11 +14,15 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null);
   const detail = usePoll<CaseDetail>(selected ? `/api/cases/${selected}?run=${runId}` : null, 1200);
 
-  // Follow the agent: auto-select the newest case until the user picks one.
+  // Follow the agent (the case it is working on, else one waiting for a human) until the user picks a case.
   const [pinned, setPinned] = useState(false);
+  const current = state?.current_case ?? null;
   useEffect(() => {
-    if (!pinned && cases.length) setSelected(cases.find((c) => c.status !== "CLOSED")?.case_id ?? cases[0].case_id);
-  }, [cases, pinned]);
+    if (pinned || !cases.length) return;
+    const working = cases.find((c) => c.case_id === current);
+    const waiting = cases.find((c) => c.status === "ESCALATED");
+    setSelected((working ?? waiting ?? cases[0]).case_id);
+  }, [cases, pinned, current]);
   useEffect(() => { setPinned(false); setSelected(null); }, [runId]);
 
   const open = (id: string) => { setPinned(true); setSelected(id); };
@@ -27,8 +31,8 @@ export default function App() {
   return (
     <div className="flex h-full flex-col">
       <Header kpis={kpis} runId={runId} current={state?.current_case ?? null} />
-      <main className="grid min-h-0 flex-1 grid-cols-[330px_1fr_350px] gap-4 p-4">
-        <DockFeed cases={cases} selected={selected} onSelect={open} />
+      <main className="grid min-h-0 flex-1 grid-cols-[290px_1fr_320px] gap-4 p-4 2xl:grid-cols-[340px_1fr_370px]">
+        <DockFeed cases={cases} selected={selected} onSelect={open} pinned={pinned} onFollow={() => setPinned(false)} />
         <section className="min-h-0 overflow-y-auto pr-1">
           <CaseView c={detail} />
         </section>

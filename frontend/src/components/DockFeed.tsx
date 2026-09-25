@@ -2,16 +2,22 @@ import type { CaseRow } from "../api";
 import { img, usd } from "../api";
 import { ActionBadge, StatusChip } from "./ui";
 
-export default function DockFeed({ cases, selected, onSelect }: { cases: CaseRow[]; selected: string | null; onSelect: (id: string) => void }) {
+export default function DockFeed({ cases, selected, onSelect, pinned, onFollow }: {
+  cases: CaseRow[]; selected: string | null; onSelect: (id: string) => void; pinned: boolean; onFollow: () => void;
+}) {
   return (
     <aside className="flex min-h-0 flex-col">
       <div className="flex items-center justify-between px-1 pb-2">
         <h2 className="label">Receiving dock · live feed</h2>
-        <span className="font-mono text-[10px] text-muted">{cases.length} returns</span>
+        {pinned
+          ? <button onClick={onFollow} className="font-mono text-[10px] text-live hover:underline">follow the agent ↻</button>
+          : <span className="font-mono text-[10px] text-muted">{cases.length} · following agent</span>}
       </div>
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
         {cases.length === 0 && (
-          <div className="card p-6 text-center text-sm text-muted">Waiting for returns to arrive at the dock…</div>
+          <div className="card p-6 text-center text-sm text-muted">
+            No returns yet. Press <b className="text-ink">NEW SHIFT</b>: returns land in RawTree and the agent picks each one up by itself.
+          </div>
         )}
         {cases.map((c) => (
           <button key={c.case_id} onClick={() => onSelect(c.case_id)}

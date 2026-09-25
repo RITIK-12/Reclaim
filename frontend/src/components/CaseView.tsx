@@ -12,7 +12,6 @@ const AGENT_STYLE: Record<string, string> = {
 
 function Photos({ c }: { c: CaseDetail }) {
   const photos: string[] = c.return?.photos ?? [];
-  const used = c.inspection?.photos_used ?? 1;
   const [idx, setIdx] = useState(0);
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -29,7 +28,7 @@ function Photos({ c }: { c: CaseDetail }) {
           <span className="flex gap-1">
             {photos.map((_, i) => (
               <button key={i} onClick={() => setIdx(i)} className={`h-5 w-5 rounded font-mono text-[10px] ${i === idx ? "bg-ink text-paper" : "bg-stone-100"}`}>
-                {i + 1}{i < used ? "" : ""}
+                {i + 1}
               </button>
             ))}
           </span>
@@ -161,7 +160,13 @@ function Pending({ text }: { text: string }) {
 }
 
 export default function CaseView({ c }: { c: CaseDetail | null }) {
-  if (!c) return <div className="card flex h-full items-center justify-center text-muted">Select a return from the dock feed.</div>;
+  if (!c) return (
+    <div className="card flex h-full flex-col items-center justify-center gap-2 p-10 text-center text-muted">
+      <div className="font-mono text-sm tracking-[0.2em] text-ink">NO CASE SELECTED</div>
+      <p className="max-w-md text-sm">When a return arrives, the Supervisor opens a case on its own: Liquid inspects the photos,
+        Nimble prices the item on the live web, the policy picks an action and the Operator executes it in RawTree.</p>
+    </div>
+  );
   const r = c.return;
   return (
     <div className="space-y-3">
