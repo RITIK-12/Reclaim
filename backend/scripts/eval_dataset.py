@@ -24,6 +24,20 @@ def simulated_human(run_id: str, case_id: str, packet: dict) -> dict:
             "note": "Accepted the agent's suggestion.", "by": "simulated"}
 
 
+def write_report(run_id: str, n: int, workers: int, timing: str) -> str:
+    """Score the run against ground truth, write docs/EVALUATION.md and store the metrics in RawTree."""
+    notes = [f"* Dataset: `backend/dataset/returns_100.csv` ({n} returns, FLUX.2 [max] dock photos of real "
+             "catalog products; 5 categories × 20, 4 per action per category).",
+             f"* Model: Liquid LFM2.5-VL-3B F16, served locally from `models/` by llama.cpp at {settings.llm_url}, "
+             f"{workers} case(s) at a time on an M1 Pro (16 GB). {timing}",
+             "* Live web prices from Nimble; every step written to RawTree; escalations answered by a simulated "
+             "human that never becomes precedent."]
+    md = markdown_report(Evaluator(), run_id, "Reclaim · evaluation on the 100-return synthetic dataset", notes)
+    (ROOT / "docs" / "EVALUATION.md").write_text(md)
+    Evaluator().report(run_id)  # also stored in reclaim_eval_runs
+    return md
+
+
 if __name__ == "__main__":
     rows = read_csv()
     if arg("--split"):
@@ -45,14 +59,4 @@ if __name__ == "__main__":
     runner.wait_idle()
     wall = time.time() - t0
     time.sleep(2)
-    notes = [f"* Dataset: `backend/dataset/returns_100.csv` ({len(rows)} returns, FLUX.2 [max] dock photos of real "
-             "catalog products; 5 categories × 20, 4 per action per category).",
-             f"* Model: Liquid LFM2.5-VL-3B F16, served locally from `models/` by llama.cpp at {settings.llm_url}, "
-             f"{runner.workers} cases in parallel on an M1 Pro (16 GB). Wall clock {wall / 60:.1f} min.",
-             "* Live web prices from Nimble; every step written to RawTree; escalations answered by a simulated "
-             "human that never becomes precedent."]
-    md = markdown_report(Evaluator(), run_id, "Reclaim · evaluation on the 100-return synthetic dataset", notes)
-    out = ROOT / "docs" / "EVALUATION.md"
-    out.write_text(md)
-    Evaluator().report(run_id)  # also stored in reclaim_eval_runs
-    print(md)
+    print(write_report(run_id, len(rows), runner.workers, f"Wall clock {wall / 60:.1f} min."))

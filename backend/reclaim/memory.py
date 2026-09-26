@@ -41,10 +41,11 @@ class Memory:
         return rows
 
     def case_heads(self, run_id: str) -> dict[str, dict]:
-        """Latest event per case: the status projection."""
+        """Latest event per case: the status projection. On a same-millisecond tie the terminal event wins."""
+        rank = "toInt64(ts_ms) * 10 + (toString(type) IN ('case.closed', 'case.failed'))"
         rows = self.db.query(
-            f"SELECT toString(case_id) AS cid, argMax(toString(type), toInt64(ts_ms)) AS last_type, "
-            f"argMax(toString(summary), toInt64(ts_ms)) AS last_summary, max(toInt64(ts_ms)) AS last_ts, "
+            f"SELECT toString(case_id) AS cid, argMax(toString(type), {rank}) AS last_type, "
+            f"argMax(toString(summary), {rank}) AS last_summary, max(toInt64(ts_ms)) AS last_ts, "
             f"min(toInt64(ts_ms)) AS first_ts, count() AS n FROM {{t:mem_events}} "
             f"WHERE run_id = {sql_str(run_id)} GROUP BY cid")
         return {r["cid"]: r for r in rows}

@@ -101,17 +101,22 @@ Vendor return terms and the cost model are synthetic and labelled as such.
 | Needless escalations | 0 |
 | Extra value vs liquidating everything | +$1,861 |
 
-**FLUX dataset, full end-to-end runs.** 49 of 100 returns were processed before the deadline: phones, laptops and part of headphones, since cases run in order.
+**100-return FLUX dataset, end to end** (`backend/dataset/returns_100.csv`, one run, no tuning):
 
 | Metric | Result |
 |---|---|
-| Correct action | 67.3% |
-| Condition grade within one step | 100% |
-| Extra value vs liquidating everything | +$6,609 |
-| Needless escalations | 11 |
-| Unsafe auto-resolves | 3 |
+| Correct action | 58.0% (58/100) |
+| Condition grade exact / within one step | 76.4% / 98.2% |
+| Wrong-item returns sent to a human | 5 of 10 |
+| Unsafe auto-resolves | 6 |
+| Needless escalations | 33 |
+| Extra value vs liquidating everything | +$7,448 |
 
-Most misses are the Inspector being cautious about identity and escalating. Throughput is about 35–40 s per case on an M1 Pro with F16 weights: the model decodes about 15–20 tokens/s and each case emits about 500 JSON tokens. Quantized weights are the obvious next step.
+| Category | phone | laptop | smartwatch | headphones | earbuds |
+|---|---|---|---|---|---|
+| Correct action | 70% | 65% | 65% | 55% | 35% |
+
+Grading is reliable; identity is the weak spot. 33 of the 42 misses are escalations where the Inspector could not confirm the item and asked a person, which is the safe way to fail. Five of the six unsafe auto-resolves are look-alike swaps that the 3B model accepted as the ordered product. Earbuds score lowest: the Inspector flagged 10 genuine pairs as possible swaps. A case takes about 45–65 s on an M1 Pro with F16 weights (the model decodes about 15–20 tokens/s). Quantized weights and fine-tuning the Inspector on the 90-return training split are the next steps.
 
 ## Run it
 
